@@ -1,0 +1,171 @@
+.kec-top-strip-wrapper {
+  width: 100%;
+  position: relative;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.kec-dual-tone-bar {
+  display: flex;
+  width: 100%;
+  height: 38px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+/* Left Green Segment */
+.kec-bar-green {
+  background: #7CB342;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.5rem;
+  flex: 0 0 auto;
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0% 100%);
+  padding-right: 2.5rem;
+}
+
+.kec-strip-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.kec-strip-icon {
+  font-size: 0.9rem;
+}
+
+.kec-strip-divider {
+  opacity: 0.6;
+}
+
+.kec-strip-text {
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+/* Right Cyan Segment */
+.kec-bar-cyan {
+  background: #0099D8;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.25rem;
+  padding: 0 1.5rem;
+  flex: 1;
+}
+
+.kec-strip-link {
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-weight: 500;
+}
+
+.kec-strip-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.kec-strip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.kec-strip-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.kec-live-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #4ade80;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px #4ade80;
+  animation: kecPulseLive 2s infinite ease-in-out;
+}
+
+@keyframes kecPulseLive {
+  0% { transform: scale(0.95); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 8px #4ade80; }
+  100% { transform: scale(0.95); opacity: 0.6; }
+}
+
+.kec-time-divider {
+  opacity: 0.45;
+  margin: 0 0.1rem;
+}
+
+.kec-time-icon {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.kec-live-time {
+  color: #E0F2FE;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+@media (max-width: 992px) {
+  .kec-strip-link {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .kec-bar-green {
+    clip-path: none;
+    padding-right: 1rem;
+    font-size: 0.7rem;
+  }
+  .kec-strip-link, .kec-strip-text, .kec-strip-divider {
+    display: none;
+  }
+  .kec-bar-cyan {
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .kec-strip-badge {
+    display: none;
+  }
+  .kec-strip-date {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.45rem;
+  }
+  .kec-live-date-text {
+    display: none;
+  }
+  .kec-time-divider {
+    display: none;
+  }
+}

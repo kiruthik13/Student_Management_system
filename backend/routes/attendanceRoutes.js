@@ -169,7 +169,49 @@ router.post('/bulk-mark', authenticateAdmin, requireActiveAdmin, validateBulkAtt
 
 // GET /api/attendance/student/:studentId - Get attendance for a specific student
 router.get('/student/:studentId', authenticateAdmin, requireActiveAdmin, async (req, res) => {
-  // ...
+  try {
+    const { studentId } = req.params;
+    const { startDate, endDate } = req.query;
+
+    const student = await Student.findById(studentId).select('fullName rollNumber className section email');
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const query = { student: studentId };
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+
+      // Buffer by 12 hours on both ends to cover UTC and local timezone storage differences (e.g. IST UTC+5:30)
+      const bufferStart = new Date(start.getTime() - 12 * 60 * 60 * 1000);
+      const bufferEnd = new Date(end.getTime() + 12 * 60 * 60 * 1000);
+      query.date = { $gte: bufferStart, $lte: bufferEnd };
+    } else if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(startDate);
+      end.setHours(23, 59, 59, 999);
+      const bufferStart = new Date(start.getTime() - 12 * 60 * 60 * 1000);
+      const bufferEnd = new Date(end.getTime() + 12 * 60 * 60 * 1000);
+      query.date = { $gte: bufferStart, $lte: bufferEnd };
+    }
+
+    const attendance = await Attendance.find(query)
+      .sort({ date: 1 })
+      .populate('student', 'fullName rollNumber className section email');
+
+    res.json({
+      student,
+      attendance
+    });
+  } catch (error) {
+    console.error('Get student attendance error:', error);
+    res.status(500).json({ message: 'Failed to fetch student attendance', error: error.message });
+  }
 });
 
 // GET /api/attendance/class - Get attendance for a class on a specific date, with optional session and studentId filters
@@ -580,11 +622,13 @@ router.get('/range-report', authenticateAdmin, requireActiveAdmin, async (req, r
 
       studentReport.forEach(dateData => {
         periods.forEach(period => {
-          const status = dateData[`period${period}`];
-          if (status && status !== 'not-marked') {
+          const status = (dateData[`period${period}`] || '').toLowerCase();
+          if (status && status !== 'not-marked' && status !== '-') {
             totalMarked++;
-            if (status === 'present') {
-              totalPresent++;
+            if (status === 'present' || status === 'late') {
+              totalPresent += 1;
+            } else if (status === 'half-day') {
+              totalPresent += 0.5;
             }
           }
         });
@@ -801,9 +845,14 @@ router.get('/date-range-report', authenticateAdmin, requireActiveAdmin, async (r
           // Check if student has any marked periods for this date
           const totalMarkedPeriods = attendanceRecord.forenoon.periods.length + attendanceRecord.afternoon.periods.length;
           if (totalMarkedPeriods > 0) {
-            // Calculate attendance percentage
-            const totalPresent = attendanceRecord.forenoon.periods.filter(p => p.status === 'present').length +
-              attendanceRecord.afternoon.periods.filter(p => p.status === 'present').length;
+            const countAttended = (periodsArr) => (periodsArr || []).reduce((sum, p) => {
+              const st = (p.status || '').toLowerCase();
+              if (st === 'present' || st === 'late') return sum + 1;
+              if (st === 'half-day') return sum + 0.5;
+              return sum;
+            }, 0);
+            const totalPresent = countAttended(attendanceRecord.forenoon.periods) +
+              countAttended(attendanceRecord.afternoon.periods);
             const percentage = Math.round((totalPresent / totalMarkedPeriods) * 100);
             studentAttendance[dateStr] = `${totalPresent}/${totalMarkedPeriods} (${percentage}%)`;
           } else {

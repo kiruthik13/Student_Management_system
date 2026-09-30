@@ -108,9 +108,9 @@
 .filter-group select:focus,
 .filter-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #0099D8;
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 153, 216, 0.15);
 }
 
 /* Loading and No Data */
@@ -329,37 +329,49 @@
 
 /* Status Badge */
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
   text-transform: capitalize;
   display: inline-block;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .status-badge.present {
-  background: #d4edda;
-  color: #155724;
+  background: #E8F5E9;
+  color: #1B5E20;
+  border: 1px solid #A5D6A7;
 }
 
 .status-badge.absent {
-  background: #f8d7da;
-  color: #721c24;
+  background: #FFEBEE;
+  color: #B71C1C;
+  border: 1px solid #FFCDD2;
 }
 
 .status-badge.late {
-  background: #fff3cd;
-  color: #856404;
+  background: #FFF8E1;
+  color: #B78103;
+  border: 1px solid #FFE082;
 }
 
 .status-badge.half-day {
-  background: #ffeaa7;
-  color: #d63031;
+  background: #FFF3E0;
+  color: #E65100;
+  border: 1px solid #FFCC80;
 }
 
 .status-badge.not-marked {
-  background: #e9ecef;
-  color: #6c757d;
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+}
+
+.summary-card.not-marked .card-icon {
+  background: #64748b;
 }
 
 /* Report Summary */
@@ -401,7 +413,7 @@
 }
 
 .summary-card.total .card-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0099D8 0%, #0B2545 100%);
 }
 
 .summary-card.present .card-icon {
@@ -441,7 +453,7 @@
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0099D8 0%, #7CB342 100%);
   color: white;
   border: none;
   padding: 15px 30px;

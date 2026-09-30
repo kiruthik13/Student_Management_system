@@ -1,0 +1,166 @@
+.kec-brand-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  user-select: none;
+}
+
+.kec-brand-container.center {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.kec-brand-container.left {
+  flex-direction: row;
+  text-align: left;
+}
+
+/* Emblem */
+.kec-bubble-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kec-bubble-svg {
+  filter: drop-shadow(0 4px 10px rgba(0, 153, 216, 0.25));
+  transition: transform 0.3s ease;
+}
+
+.kec-bubble-svg:hover {
+  transform: scale(1.06) rotate(3deg);
+}
+
+/* Sizes */
+.kec-brand-container.small .kec-bubble-svg {
+  width: 44px;
+  height: 44px;
+}
+
+.kec-brand-container.medium .kec-bubble-svg {
+  width: 64px;
+  height: 64px;
+}
+
+.kec-brand-container.large .kec-bubble-svg {
+  width: 90px;
+  height: 90px;
+}
+
+/* Typography matching KEC Logo */
+.kec-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.kec-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-family: 'Inter', -apple-system, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.kec-brand-container.center .kec-title-row {
+  justify-content: center;
+}
+
+.kec-word-kongu {
+  font-weight: 800;
+  color: #7CB342;
+}
+
+.kec-word-eng {
+  font-weight: 800;
+  color: #0099D8;
+}
+
+.kec-word-college {
+  font-weight: 800;
+  color: #7CB342;
+}
+
+.kec-brand-container.small .kec-title-row {
+  font-size: 1rem;
+}
+
+.kec-brand-container.medium .kec-title-row {
+  font-size: 1.35rem;
+}
+
+.kec-brand-container.large .kec-title-row {
+  font-size: 1.85rem;
+}
+
+/* Tagline */
+.kec-tagline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.kec-brand-container.center .kec-tagline {
+  justify-content: center;
+}
+
+.kec-autonomous {
+  color: #0B2545;
+  font-weight: 700;
+}
+
+.kec-divider {
+  color: #CBD5E1;
+}
+
+.kec-motto {
+  color: #0099D8;
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* Credentials Pills */
+.kec-credentials {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.kec-brand-container.center .kec-credentials {
+  justify-content: center;
+}
+
+.kec-badge-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.kec-badge-pill.naac {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+}
+
+.kec-badge-pill.nba {
+  background: #E0F2FE;
+  color: #0369A1;
+  border: 1px solid #BAE6FD;
+}
+
+.kec-badge-pill.anna {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}

@@ -1,0 +1,579 @@
+/* =========================================================
+   KEC Official Login Page Styling - Matching Mockup Exactly
+   ========================================================= */
+
+.kec-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hero Section with Split Layout */
+.kec-hero-section {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  background: radial-gradient(circle at 85% 30%, rgba(0, 153, 216, 0.08) 0%, transparent 45%),
+              radial-gradient(circle at 95% 75%, rgba(124, 179, 66, 0.09) 0%, transparent 40%),
+              #ffffff;
+  overflow: hidden;
+}
+
+/* Ambient Bokeh Circles on Right Side behind Login Card */
+.kec-bokeh-circle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(2px);
+  z-index: 1;
+}
+
+.bokeh-cyan-1 {
+  width: 140px;
+  height: 140px;
+  top: 10%;
+  right: 28%;
+  background: radial-gradient(circle, rgba(0, 153, 216, 0.22) 0%, rgba(0, 153, 216, 0.02) 70%);
+}
+
+.bokeh-green-1 {
+  width: 160px;
+  height: 160px;
+  bottom: 8%;
+  right: 2%;
+  background: radial-gradient(circle, rgba(124, 179, 66, 0.22) 0%, rgba(124, 179, 66, 0.02) 70%);
+}
+
+.bokeh-cyan-2 {
+  width: 90px;
+  height: 90px;
+  top: 30%;
+  right: 4%;
+  background: radial-gradient(circle, rgba(0, 153, 216, 0.18) 0%, rgba(0, 153, 216, 0.02) 70%);
+}
+
+/* Two-Column Content Grid */
+.kec-hero-grid {
+  width: 100%;
+  max-width: 1360px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 3.5rem;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* =========================================================
+   LEFT COLUMN: Welcome, Title, Accreditation Badges & Gate
+   ========================================================= */
+.kec-hero-left {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Decorative Dot Grid Pattern in Top-Left */
+.kec-dot-matrix {
+  width: 72px;
+  height: 48px;
+  margin-bottom: 0.75rem;
+  opacity: 0.35;
+  background-image: radial-gradient(#0099D8 2px, transparent 2px);
+  background-size: 12px 12px;
+}
+
+.hero-welcome-tag {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #334155;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+}
+
+.hero-main-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.5px;
+}
+
+.title-kongu {
+  color: #7CB342;
+}
+
+.title-eng {
+  color: #0099D8;
+}
+
+.hero-tagline {
+  font-size: 1.15rem;
+  color: #64748B;
+  letter-spacing: 3px;
+  font-weight: 500;
+  margin: 0 0 1.75rem 0;
+}
+
+/* 3 Accreditation Cards Row */
+.kec-accreditation-row {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.kec-acc-card {
+  flex: 1;
+  min-width: 140px;
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kec-acc-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 153, 216, 0.12);
+  border-color: #BAE6FD;
+}
+
+.kec-acc-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #0B2545;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.kec-acc-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.kec-acc-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0B2545;
+  line-height: 1.2;
+}
+
+.kec-acc-subtitle {
+  font-size: 0.75rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* Gate Photo Container */
+.kec-gate-frame {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid #E2E8F0;
+  position: relative;
+}
+
+.kec-gate-image {
+  width: 100%;
+  height: auto;
+  max-height: 340px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.kec-gate-frame:hover .kec-gate-image {
+  transform: scale(1.02);
+}
+
+/* =========================================================
+   RIGHT COLUMN: The White Floating Login Card
+   ========================================================= */
+.kec-hero-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kec-login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 20px 45px rgba(0, 153, 216, 0.12),
+              0 4px 16px rgba(11, 37, 69, 0.05);
+  border: 1px solid rgba(0, 153, 216, 0.14);
+  position: relative;
+  z-index: 10;
+}
+
+/* Card Header: Bubble motif, Typography, Title */
+.kec-card-header {
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+
+.kec-card-bubble-emblem {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+}
+
+.kec-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}
+
+.kec-portal-heading {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #0B2545;
+  margin: 0.4rem 0 0.2rem 0;
+  letter-spacing: -0.3px;
+}
+
+.kec-portal-subtitle {
+  font-size: 0.88rem;
+  color: #64748B;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Role Selector Pill Bar */
+.kec-role-pill-bar {
+  display: flex;
+  background: #F1F5F9;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #E2E8F0;
+}
+
+.kec-role-pill-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.kec-role-pill-btn.active.student {
+  background: linear-gradient(90deg, #10B981 0%, #0099D8 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
+}
+
+.kec-role-pill-btn.active.admin {
+  background: linear-gradient(90deg, #0099D8 0%, #10B981 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 153, 216, 0.28);
+}
+
+.kec-role-pill-btn:not(.active):hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: #0F172A;
+}
+
+/* Form Fields */
+.kec-form-group {
+  margin-bottom: 1.15rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.kec-form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.4rem;
+}
+
+.kec-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.kec-field-icon {
+  position: absolute;
+  left: 14px;
+  color: #64748B;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.kec-form-input {
+  width: 100%;
+  height: 46px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0 14px 0 42px;
+  font-size: 0.92rem;
+  color: #0F172A;
+  background: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.kec-form-input:focus {
+  outline: none;
+  border-color: #0099D8;
+  box-shadow: 0 0 0 3px rgba(0, 153, 216, 0.15);
+}
+
+.kec-form-input.error {
+  border-color: #EF4444;
+  background: #FFF5F5;
+}
+
+.kec-pwd-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.kec-pwd-toggle-btn:hover {
+  color: #0099D8;
+}
+
+.kec-forgot-link-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.35rem;
+}
+
+.kec-forgot-link {
+  font-size: 0.82rem;
+  color: #0099D8;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.kec-forgot-link:hover {
+  text-decoration: underline;
+  color: #0077A8;
+}
+
+/* Submit Button */
+.kec-signin-btn {
+  width: 100%;
+  height: 48px;
+  margin-top: 1.25rem;
+  background: linear-gradient(90deg, #16A34A 0%, #0099D8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  box-shadow: 0 8px 20px rgba(0, 153, 216, 0.28);
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.kec-signin-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 153, 216, 0.38);
+}
+
+.kec-signin-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.kec-signin-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Bottom Motto Divider */
+.kec-card-motto-divider {
+  display: flex;
+  align-items: center;
+  margin-top: 1.35rem;
+  text-align: center;
+  color: #94A3B8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.kec-card-motto-divider::before,
+.kec-card-motto-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.kec-card-motto-divider span {
+  padding: 0 0.85rem;
+}
+
+/* Register link footer */
+.kec-card-register-footer {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #64748B;
+}
+
+.kec-card-register-link {
+  background: none;
+  border: none;
+  color: #0099D8;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  margin-left: 0.35rem;
+}
+
+.kec-card-register-link:hover {
+  text-decoration: underline;
+}
+
+/* Error and Success Alert Banners */
+.kec-alert-box {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kec-alert-error {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+
+.kec-alert-success {
+  background: #DCFCE7;
+  color: #16A34A;
+  border: 1px solid #86EFAC;
+}
+
+/* Password Requirements Box for Register */
+.kec-pwd-req-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  margin-top: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.kec-pwd-req-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 0.15rem;
+}
+
+.kec-pwd-req-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: #64748B;
+  transition: color 0.2s;
+}
+
+.kec-pwd-req-item.met {
+  color: #16A34A;
+  font-weight: 600;
+}
+
+.kec-pwd-req-icon {
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1080px) {
+  .kec-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .kec-hero-left {
+    text-align: center;
+    align-items: center;
+  }
+  .hero-main-title {
+    font-size: 2.1rem;
+  }
+  .kec-accreditation-row {
+    justify-content: center;
+  }
+  .kec-login-card {
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kec-hero-section {
+    padding: 1.5rem 1rem;
+  }
+  .hero-main-title {
+    font-size: 1.7rem;
+  }
+  .kec-login-card {
+    padding: 1.75rem 1.25rem;
+  }
+  .kec-acc-card {
+    min-width: 100%;
+  }
+}

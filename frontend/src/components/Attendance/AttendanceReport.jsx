@@ -28,8 +28,8 @@ const AttendanceReport = () => {
   const [selectedSession, setSelectedSession] = useState('');
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [dateRangeError, setDateRangeError] = useState('');
 
   // Helper function to validate and fix date range
@@ -258,16 +258,14 @@ const AttendanceReport = () => {
       const data = await getStudentAttendance(selectedStudent, startDate, endDate);
       console.log('Student attendance response:', data);
 
-      // Get student details from the first attendance record or from students list
-      let studentDetails = null;
-      if (data.attendance && data.attendance.length > 0) {
+      // Get student details from response or student list
+      let studentDetails = data.student || null;
+      if (!studentDetails && data.attendance && data.attendance.length > 0) {
         const firstRecord = data.attendance[0];
         if (firstRecord.student) {
           studentDetails = firstRecord.student;
         }
       }
-
-      // If no student details from attendance, get from students list
       if (!studentDetails) {
         const selectedStudentObj = students.find(s => s._id === selectedStudent);
         if (selectedStudentObj) {
@@ -282,81 +280,57 @@ const AttendanceReport = () => {
 
       if (data.attendance && data.attendance.length > 0) {
         data.attendance.forEach(record => {
-          // Ensure proper date formatting
           const recordDate = new Date(record.date);
-          if (isNaN(recordDate.getTime())) {
-            console.warn('Invalid date found:', record.date);
-            return; // Skip invalid dates
-          }
+          const date = isNaN(recordDate.getTime()) ? '-' : recordDate.toLocaleDateString('en-GB');
+          const rawTime = isNaN(recordDate.getTime()) ? 0 : recordDate.getTime();
 
-          const date = recordDate.toLocaleDateString('en-GB');
+          const fnMap = {};
+          (record.forenoon?.periods || []).forEach(p => { fnMap[p.period] = p; });
+          const anMap = {};
+          (record.afternoon?.periods || []).forEach(p => { anMap[p.period] = p; });
 
-          // Process forenoon periods
-          if (record.forenoon && record.forenoon.periods) {
-            record.forenoon.periods.forEach(period => {
-              processedReports.push({
-                date: date,
-                period: period.period,
-                status: period.status || 'not-marked',
-                remarks: period.remarks || '-',
-                session: 'Forenoon',
-                studentId: record.student?._id || record.student,
-                studentName: record.student?.fullName || studentDetails?.fullName || 'Unknown',
-                rollNumber: record.student?.rollNumber || studentDetails?.rollNumber || '-'
-              });
+          // Periods 1 to 4 (Forenoon)
+          for (let pNum = 1; pNum <= 4; pNum++) {
+            const pData = fnMap[pNum];
+            processedReports.push({
+              date,
+              rawTime,
+              period: pNum,
+              status: pData ? (pData.status || 'not-marked') : 'not-marked',
+              remarks: pData ? (pData.remarks || '-') : '-',
+              session: 'Forenoon',
+              studentId: record.student?._id || record.student,
+              studentName: record.student?.fullName || studentDetails?.fullName || 'Unknown',
+              rollNumber: record.student?.rollNumber || studentDetails?.rollNumber || '-',
+              className: record.student?.className || studentDetails?.className || '-',
+              section: record.student?.section || studentDetails?.section || '-'
             });
           }
 
-          // Process afternoon periods
-          if (record.afternoon && record.afternoon.periods) {
-            record.afternoon.periods.forEach(period => {
-              processedReports.push({
-                date: date,
-                period: period.period,
-                status: period.status || 'not-marked',
-                remarks: period.remarks || '-',
-                session: 'Afternoon',
-                studentId: record.student?._id || record.student,
-                studentName: record.student?.fullName || studentDetails?.fullName || 'Unknown',
-                rollNumber: record.student?.rollNumber || studentDetails?.rollNumber || '-'
-              });
+          // Periods 5 to 7 (Afternoon)
+          for (let pNum = 5; pNum <= 7; pNum++) {
+            const pData = anMap[pNum];
+            processedReports.push({
+              date,
+              rawTime,
+              period: pNum,
+              status: pData ? (pData.status || 'not-marked') : 'not-marked',
+              remarks: pData ? (pData.remarks || '-') : '-',
+              session: 'Afternoon',
+              studentId: record.student?._id || record.student,
+              studentName: record.student?.fullName || studentDetails?.fullName || 'Unknown',
+              rollNumber: record.student?.rollNumber || studentDetails?.rollNumber || '-',
+              className: record.student?.className || studentDetails?.className || '-',
+              section: record.student?.section || studentDetails?.section || '-'
             });
           }
         });
       }
 
-      // If no attendance records found, create entries for the date range showing "not-marked"
-      if (processedReports.length === 0) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        // Generate entries for each date in the range
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          const date = d.toLocaleDateString('en-GB');
-
-          // Add entries for all periods (1-7)
-          for (let period = 1; period <= 7; period++) {
-            const session = period <= 4 ? 'Forenoon' : 'Afternoon';
-            processedReports.push({
-              date: date,
-              period: period,
-              status: 'not-marked',
-              remarks: '-',
-              session: session,
-              studentId: selectedStudent,
-              studentName: studentDetails?.fullName || 'Unknown',
-              rollNumber: studentDetails?.rollNumber || '-'
-            });
-          }
-        }
-      }
-
-      // Sort by date and period
+      // Sort chronologically by date and period
       processedReports.sort((a, b) => {
-        const dateA = new Date(a.date.split('/').reverse().join('-'));
-        const dateB = new Date(b.date.split('/').reverse().join('-'));
-        if (dateA.getTime() !== dateB.getTime()) {
-          return dateA - dateB;
+        if (a.rawTime !== b.rawTime) {
+          return a.rawTime - b.rawTime;
         }
         return a.period - b.period;
       });
@@ -364,9 +338,9 @@ const AttendanceReport = () => {
       setReports(processedReports);
 
       if (processedReports.length > 0) {
-        const markedCount = processedReports.filter(r => r.status !== 'not-marked').length;
+        const markedCount = processedReports.filter(r => r.status && r.status !== 'not-marked').length;
         const totalCount = processedReports.length;
-        toast.success(`Generated report: ${markedCount} marked out of ${totalCount} total records`);
+        toast.success(`Generated report: ${markedCount} marked out of ${totalCount} total periods`);
       } else {
         toast.info('No attendance data found for the selected student and date range');
       }
@@ -821,6 +795,38 @@ const AttendanceReport = () => {
 
   const exportToCSV = () => {
     if (!reports.length) return;
+
+    if (reportType === 'student') {
+      const studentName = selectedStudentDetails?.fullName || reports[0]?.studentName || 'Student';
+      const rollNumber = selectedStudentDetails?.rollNumber || reports[0]?.rollNumber || '';
+      const headers = ['Date', 'Session', 'Period', 'Time', 'Status', 'Remarks', 'Student Name', 'Roll Number'];
+      const rows = reports.map(r => [
+        r.date,
+        r.session || '-',
+        `P${r.period}`,
+        periodTimings[r.period] || '-',
+        r.status,
+        r.remarks || '',
+        studentName,
+        rollNumber
+      ]);
+      let csvContent = '';
+      csvContent += headers.join(',') + '\n';
+      rows.forEach(row => {
+        csvContent += row.map(field => `"${(field ?? '').toString().replace(/"/g, '""')}"`).join(',') + '\n';
+      });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `attendance_student_${studentName.replace(/\s+/g, '_')}_${startDate}_to_${endDate}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      return;
+    }
+
     const periodsToUse = periods && periods.length ? periods : [1, 2, 3, 4, 5, 6, 7];
     const periodDuration = 1; // 1 hour per period
     const headers = [
@@ -831,14 +837,20 @@ const AttendanceReport = () => {
       ...periodsToUse.map(p => `P${p} (${periodTimings[p]})`),
       'Scheduled Hours',
       'Attended Hours',
-      'Attendance %'
+      'Attendance %',
+      'Day Status'
     ];
     const rows = reports.map(r => {
       const periodStatuses = periodsToUse.map(period => r[`period${period}`] || '-');
       const scheduled = periodsToUse.length * periodDuration;
-      // Count attended periods: present, late, half-day all count as attended
-      const attended = periodStatuses.filter(status => ['present', 'late', 'half-day'].includes((status || '').toLowerCase())).length * periodDuration;
+      let attended = 0;
+      periodStatuses.forEach(st => {
+        const s = (st || '').toLowerCase();
+        if (s === 'present' || s === 'late') attended += 1;
+        else if (s === 'half-day') attended += 0.5;
+      });
       const percentage = scheduled > 0 ? ((attended / scheduled) * 100).toFixed(2) : '0.00';
+      const dayStatus = getStudentDayStatus(r);
       return [
         r.fullName || r.student?.fullName || '-',
         r.rollNumber || r.student?.rollNumber || '-',
@@ -847,7 +859,8 @@ const AttendanceReport = () => {
         ...periodStatuses,
         scheduled,
         attended,
-        percentage
+        percentage,
+        dayStatus
       ];
     });
     let csvContent = '';
@@ -912,15 +925,80 @@ const AttendanceReport = () => {
   const statusCounts = getStatusCounts();
 
   const getStudentDayStatus = (record) => {
+    // If it's a student report record (single period)
+    if (record && record.status && !record.period1) {
+      return (record.status || 'not-marked').toLowerCase();
+    }
+
     const periods = [1, 2, 3, 4, 5, 6, 7];
-    const statuses = periods.map(period => record[`period${period}`]);
-    const marked = statuses.filter(s => s && s !== 'not-marked');
+    const statuses = periods.map(period => (record[`period${period}`] || '').toLowerCase());
+    const marked = statuses.filter(s => s && s !== 'not-marked' && s !== '-');
+
     if (marked.length === 0) return 'not-marked';
-    if (marked.every(s => s === 'absent')) return 'absent';
-    if (marked.includes('present')) return 'present';
-    if (marked.includes('late')) return 'late';
-    if (marked.includes('half-day')) return 'half-day';
+
+    const presentCount = marked.filter(s => s === 'present').length;
+    const absentCount = marked.filter(s => s === 'absent').length;
+    const lateCount = marked.filter(s => s === 'late').length;
+    const halfDayCount = marked.filter(s => s === 'half-day').length;
+
+    // 1. All marked periods absent, or 0 attended and has absences -> absent
+    if (absentCount === marked.length || (presentCount === 0 && lateCount === 0 && absentCount > 0)) {
+      return 'absent';
+    }
+
+    // 2. Severe absence: absent for 5 or more periods (e.g. 5+ out of 7 periods missed) -> absent
+    if (absentCount >= 5) {
+      return 'absent';
+    }
+
+    // 3. Perfect attendance (all marked periods are present, 0 absent, 0 late, 0 half-day) -> present
+    if (absentCount === 0 && halfDayCount === 0 && lateCount === 0 && presentCount > 0) {
+      return 'present';
+    }
+
+    // 4. All attended with some late arrivals (0 absent, 0 half-day, >=1 late) -> late
+    if (absentCount === 0 && halfDayCount === 0 && lateCount > 0) {
+      return 'late';
+    }
+
+    // 5. Partial attendance (missed 1 to 4 periods, or explicitly half-day marked) -> half-day
+    if (absentCount > 0 || halfDayCount > 0) {
+      return 'half-day';
+    }
+
     return 'not-marked';
+  };
+
+  const getStudentPeriodStats = (record) => {
+    const periodsToUse = periods && periods.length ? periods : [1, 2, 3, 4, 5, 6, 7];
+    let markedCount = 0;
+    let attendedCount = 0;
+    let absentCount = 0;
+
+    periodsToUse.forEach(p => {
+      const st = (record[`period${p}`] || '').toLowerCase();
+      if (st && st !== 'not-marked' && st !== '-') {
+        markedCount++;
+        if (st === 'present' || st === 'late') {
+          attendedCount += 1;
+        } else if (st === 'half-day') {
+          attendedCount += 0.5;
+        } else if (st === 'absent') {
+          absentCount += 1;
+        }
+      }
+    });
+
+    const total = periodsToUse.length;
+    const percentage = markedCount > 0 ? ((attendedCount / markedCount) * 100).toFixed(1) : '0.0';
+
+    return {
+      attendedCount,
+      markedCount,
+      total,
+      absentCount,
+      percentage
+    };
   };
 
   const getStudentDayCounts = () => {
@@ -933,9 +1011,22 @@ const AttendanceReport = () => {
       total: 0
     };
 
+    if (reportType === 'student') {
+      reports.forEach(record => {
+        counts.total++;
+        const st = (record.status || '').toLowerCase();
+        if (counts.hasOwnProperty(st)) {
+          counts[st]++;
+        } else {
+          counts['not-marked']++;
+        }
+      });
+      return counts;
+    }
+
     reports.forEach(record => {
       counts.total++;
-      // Calculate status from period data
+      // Calculate status from period data with accurate threshold logic
       const status = getStudentDayStatus(record);
       if (counts.hasOwnProperty(status)) {
         counts[status]++;
@@ -1036,16 +1127,22 @@ const AttendanceReport = () => {
                   ...periodsToUse.map(p => `P${p} (${periodTimings[p]})`),
                   'Scheduled Hours',
                   'Attended Hours',
-                  'Attendance %'
+                  'Attendance %',
+                  'Day Status'
                 ];
 
                 const rows = reports.map(r => {
                   console.log('Processing report record:', r);
                   const periodStatuses = periodsToUse.map(period => r[`period${period}`] || '-');
                   const scheduled = periodsToUse.length * periodDuration;
-                  // Count attended periods: present, late, half-day all count as attended
-                  const attended = periodStatuses.filter(status => ['present', 'late', 'half-day'].includes((status || '').toLowerCase())).length * periodDuration;
+                  let attended = 0;
+                  periodStatuses.forEach(st => {
+                    const s = (st || '').toLowerCase();
+                    if (s === 'present' || s === 'late') attended += 1;
+                    else if (s === 'half-day') attended += 0.5;
+                  });
                   const percentage = scheduled > 0 ? ((attended / scheduled) * 100).toFixed(2) : '0.00';
+                  const dayStatus = getStudentDayStatus(r);
                   return [
                     r.fullName || r.student?.fullName || '-',
                     r.rollNumber || r.student?.rollNumber || '-',
@@ -1054,7 +1151,8 @@ const AttendanceReport = () => {
                     ...periodStatuses,
                     scheduled,
                     attended,
-                    percentage
+                    percentage,
+                    dayStatus
                   ];
                 });
 
@@ -1203,9 +1301,24 @@ const AttendanceReport = () => {
         <div className="report-filters">
           <div className="filter-group">
             <label>Student</label>
-            <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)}>
+            <select
+              value={selectedStudent}
+              onChange={e => {
+                const id = e.target.value;
+                setSelectedStudent(id);
+                const sObj = students.find(s => s._id === id);
+                if (sObj) {
+                  setSelectedStudentDetails(sObj);
+                  if (sObj.email) setEmailAddress(sObj.email);
+                }
+              }}
+            >
               <option value="">Select Student</option>
-              {students.map(s => <option key={s._id} value={s._id}>{s.fullName}</option>)}
+              {students.map(s => (
+                <option key={s._id} value={s._id}>
+                  {s.fullName} {s.rollNumber ? `(${s.rollNumber})` : ''}
+                </option>
+              ))}
             </select>
           </div>
           <div className="filter-group">
@@ -1282,22 +1395,47 @@ const AttendanceReport = () => {
                     <th>Class</th>
                     <th>Section</th>
                     {(periods && periods.length ? periods : [1, 2, 3, 4, 5, 6, 7]).map(period => (
-                      <th key={'period' + period}>P{period}<br /><span style={{ fontWeight: 400, fontSize: '11px' }}>{periodTimings[period]}</span></th>
+                      <th key={'period' + period} style={{ textAlign: 'center' }}>P{period}<br /><span style={{ fontWeight: 400, fontSize: '11px' }}>{periodTimings[period]}</span></th>
                     ))}
+                    <th style={{ textAlign: 'center' }}>Attended</th>
+                    <th style={{ textAlign: 'center' }}>Day Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {reports.map((r, idx) => (
-                    <tr key={r.studentId || idx}>
-                      <td>{r.fullName || r.student?.fullName || '-'}</td>
-                      <td>{r.rollNumber || r.student?.rollNumber || '-'}</td>
-                      <td>{r.className || r.student?.className || '-'}</td>
-                      <td>{r.section || r.student?.section || '-'}</td>
-                      {(periods && periods.length ? periods : [1, 2, 3, 4, 5, 6, 7]).map(period => (
-                        <td key={`${r.studentId || idx}-p${period}`}>{r[`period${period}`] || '-'}</td>
-                      ))}
-                    </tr>
-                  ))}
+                  {reports.map((r, idx) => {
+                    const pStats = getStudentPeriodStats(r);
+                    const dayStatus = getStudentDayStatus(r);
+                    return (
+                      <tr key={r.studentId || idx}>
+                        <td style={{ fontWeight: 500 }}>{r.fullName || r.student?.fullName || '-'}</td>
+                        <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{r.rollNumber || r.student?.rollNumber || '-'}</td>
+                        <td>{r.className || r.student?.className || '-'}</td>
+                        <td>{r.section || r.student?.section || '-'}</td>
+                        {(periods && periods.length ? periods : [1, 2, 3, 4, 5, 6, 7]).map(period => {
+                          const status = (r[`period${period}`] || 'not-marked').toLowerCase();
+                          return (
+                            <td key={`${r.studentId || idx}-p${period}`} style={{ textAlign: 'center' }}>
+                              <span className={`status-badge ${status}`}>
+                                {status}
+                              </span>
+                            </td>
+                          );
+                        })}
+                        <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                          <span style={{ fontWeight: 700, color: '#0B2545' }}>{pStats.attendedCount}</span>
+                          <span style={{ color: '#64748b' }}>/{pStats.total}</span>
+                          <span style={{ marginLeft: 6, fontSize: '12px', fontWeight: 600, color: pStats.percentage >= 75 ? '#16a34a' : pStats.percentage >= 50 ? '#ca8a04' : '#dc2626' }}>
+                            ({pStats.percentage}%)
+                          </span>
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          <span className={`status-badge ${dayStatus}`}>
+                            {dayStatus}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             ) : <div className="no-data">No data to display.</div>
@@ -1594,95 +1732,249 @@ const AttendanceReport = () => {
         </>
       )}
 
-      {/* Table for Student Report */}
-      {reportType === 'student' && (
-        <div className="attendance-table-container">
-          {loading ? <div className="loading-message">Loading...</div> : (
-            reports.length ? (
-              <table className="attendance-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Period</th>
-                    <th>Status</th>
-                    <th>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reports.sort((a, b) => new Date(a.date) - new Date(b.date) || a.period - b.period).map((r, idx) => (
-                    <tr key={r._id || idx}>
-                      <td>{r.date ? new Date(r.date).toLocaleDateString() : '-'}</td>
-                      <td>{r.period ? `P${r.period} (${periodTimings[r.period]})` : '-'}</td>
-                      <td>{r.status}</td>
-                      <td>{r.remarks || '-'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : <div className="no-data">No data to display.</div>
-          )}
+      {loading && (
+        <div className="loading-message">
+          Loading attendance report...
         </div>
       )}
 
-      {/* Summary Cards for Student Report */}
-      {reportType === 'student' && reports.length > 0 && (
-        <div className="report-summary">
-          <div className="summary-cards">
-            <div className="summary-card total">
-              <div className="card-icon">
-                <FaChartBar />
+      {/* STUDENT REPORT VIEW */}
+      {reportType === 'student' && !loading && reports.length > 0 && (
+        <div className="student-report-view" style={{ marginTop: '20px' }}>
+          {/* Executive Student Profile Header Banner */}
+          <div style={{
+            background: 'linear-gradient(135deg, #0B2545 0%, #134074 100%)',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '22px 26px',
+            marginBottom: '20px',
+            boxShadow: '0 4px 14px rgba(11, 37, 69, 0.15)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px'
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#fff' }}>
+                  {selectedStudentDetails?.fullName || reports[0]?.studentName || 'Student'}
+                </h2>
+                <span style={{
+                  background: 'rgba(255, 255, 255, 0.18)',
+                  padding: '3px 12px',
+                  borderRadius: '20px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px'
+                }}>
+                  {selectedStudentDetails?.rollNumber || reports[0]?.rollNumber || '-'}
+                </span>
               </div>
-              <div className="card-content">
-                <h3>{studentDayCounts.total}</h3>
-                <p>Total Periods</p>
-              </div>
-            </div>
-            <div className="summary-card present">
-              <div className="card-icon">
-                <FaCalendar />
-              </div>
-              <div className="card-content">
-                <h3>{studentDayCounts.present}</h3>
-                <p>Present ({getStatusPercentage(studentDayCounts.present, studentDayCounts.total)}%)</p>
-              </div>
-            </div>
-            <div className="summary-card absent">
-              <div className="card-icon">
-                <FaCalendar />
-              </div>
-              <div className="card-content">
-                <h3>{studentDayCounts.absent}</h3>
-                <p>Absent ({getStatusPercentage(studentDayCounts.absent, studentDayCounts.total)}%)</p>
-              </div>
-            </div>
-            <div className="summary-card late">
-              <div className="card-icon">
-                <FaCalendar />
-              </div>
-              <div className="card-content">
-                <h3>{studentDayCounts.late}</h3>
-                <p>Late ({getStatusPercentage(studentDayCounts.late, studentDayCounts.total)}%)</p>
-              </div>
-            </div>
-            <div className="summary-card half-day">
-              <div className="card-icon">
-                <FaCalendar />
-              </div>
-              <div className="card-content">
-                <h3>{studentDayCounts['half-day']}</h3>
-                <p>Half-Day ({getStatusPercentage(studentDayCounts['half-day'], studentDayCounts.total)}%)</p>
+              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '13.5px', color: '#E0E7FF' }}>
+                <span><strong>Class:</strong> {selectedStudentDetails?.className || reports[0]?.className || '-'} - {selectedStudentDetails?.section || reports[0]?.section || '-'}</span>
+                <span><strong>Period Range:</strong> {startDate} to {endDate}</span>
+                {(selectedStudentDetails?.email || emailAddress) && (
+                  <span><strong>Email:</strong> {selectedStudentDetails?.email || emailAddress}</span>
+                )}
               </div>
             </div>
-            <div className="summary-card not-marked">
-              <div className="card-icon">
-                <FaCalendar />
-              </div>
-              <div className="card-content">
-                <h3>{studentDayCounts['not-marked']}</h3>
-                <p>Not Marked ({getStatusPercentage(studentDayCounts['not-marked'], studentDayCounts.total)}%)</p>
-              </div>
-            </div>
+
+            {/* Attendance Rate Widget */}
+            {(() => {
+              const markedCount = studentDayCounts.present + studentDayCounts.absent + studentDayCounts.late + studentDayCounts['half-day'];
+              const effectiveAttended = studentDayCounts.present + studentDayCounts.late + (studentDayCounts['half-day'] * 0.5);
+              const rate = markedCount > 0 ? ((effectiveAttended / markedCount) * 100).toFixed(1) : '0.0';
+              const isGood = Number(rate) >= 75;
+              const isAvg = Number(rate) >= 50 && Number(rate) < 75;
+
+              return (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '12px',
+                  padding: '12px 22px',
+                  textAlign: 'center',
+                  minWidth: '150px'
+                }}>
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#93C5FD', fontWeight: 600 }}>
+                    Attendance Rate
+                  </div>
+                  <div style={{
+                    fontSize: '28px',
+                    fontWeight: 800,
+                    color: isGood ? '#4ade80' : isAvg ? '#fde047' : '#f87171',
+                    lineHeight: '1.2'
+                  }}>
+                    {rate}%
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#cbd5e1', marginTop: '2px' }}>
+                    {markedCount} of {studentDayCounts.total} periods marked
+                  </div>
+                </div>
+              );
+            })()}
           </div>
+
+          {/* Student Summary Cards */}
+          {(() => {
+            const markedCount = studentDayCounts.present + studentDayCounts.absent + studentDayCounts.late + studentDayCounts['half-day'];
+            return (
+              <div className="report-summary" style={{ marginBottom: '20px' }}>
+                <div className="summary-cards">
+                  <div className="summary-card total">
+                    <div className="card-icon">
+                      <FaChartBar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts.total}</h3>
+                      <p>Total Periods</p>
+                    </div>
+                  </div>
+                  <div className="summary-card present">
+                    <div className="card-icon">
+                      <FaCalendar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts.present}</h3>
+                      <p>Present ({getStatusPercentage(studentDayCounts.present, markedCount || studentDayCounts.total)}%)</p>
+                    </div>
+                  </div>
+                  <div className="summary-card absent">
+                    <div className="card-icon">
+                      <FaCalendar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts.absent}</h3>
+                      <p>Absent ({getStatusPercentage(studentDayCounts.absent, markedCount || studentDayCounts.total)}%)</p>
+                    </div>
+                  </div>
+                  <div className="summary-card late">
+                    <div className="card-icon">
+                      <FaCalendar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts.late}</h3>
+                      <p>Late ({getStatusPercentage(studentDayCounts.late, markedCount || studentDayCounts.total)}%)</p>
+                    </div>
+                  </div>
+                  <div className="summary-card half-day">
+                    <div className="card-icon">
+                      <FaCalendar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts['half-day']}</h3>
+                      <p>Half-Day ({getStatusPercentage(studentDayCounts['half-day'], markedCount || studentDayCounts.total)}%)</p>
+                    </div>
+                  </div>
+                  <div className="summary-card not-marked">
+                    <div className="card-icon">
+                      <FaCalendar />
+                    </div>
+                    <div className="card-content">
+                      <h3>{studentDayCounts['not-marked']}</h3>
+                      <p>Not Marked ({getStatusPercentage(studentDayCounts['not-marked'], studentDayCounts.total)}%)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Detailed Period Attendance Table */}
+          <div className="attendance-table-container">
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '12px',
+              padding: '0 2px'
+            }}>
+              <h3 style={{ margin: 0, color: '#0B2545', fontSize: '16.5px', fontWeight: 600 }}>
+                📅 Period-by-Period Attendance Log
+              </h3>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>
+                Showing {reports.length} period entries
+              </span>
+            </div>
+            <table className="attendance-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '130px' }}>Date</th>
+                  <th style={{ width: '120px' }}>Session</th>
+                  <th style={{ width: '90px', textAlign: 'center' }}>Period</th>
+                  <th>Time Slot</th>
+                  <th style={{ width: '130px', textAlign: 'center' }}>Attendance Status</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.map((record, idx) => {
+                  const period = record.period;
+                  const timing = periodTimings[period] || '-';
+                  return (
+                    <tr key={`${record.date}-p${period}-${idx}`}>
+                      <td style={{ fontWeight: 600, color: '#0B2545' }}>{record.date}</td>
+                      <td>
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          background: record.session === 'Forenoon' ? '#E0F2FE' : '#FEF3C7',
+                          color: record.session === 'Forenoon' ? '#0369A1' : '#B45309'
+                        }}>
+                          {record.session}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: '#0099D8' }}>
+                        P{period}
+                      </td>
+                      <td style={{ fontSize: '13px', color: '#475569' }}>
+                        {timing}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className={`status-badge ${record.status || 'not-marked'}`}>
+                          {record.status || 'not-marked'}
+                        </span>
+                      </td>
+                      <td style={{
+                        color: record.remarks && record.remarks !== '-' ? '#1e293b' : '#94a3b8',
+                        fontStyle: record.remarks && record.remarks !== '-' ? 'normal' : 'italic',
+                        fontSize: '13px'
+                      }}>
+                        {record.remarks || '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State for Student Report */}
+      {reportType === 'student' && !loading && reports.length === 0 && (
+        <div className="no-data" style={{
+          padding: '36px 20px',
+          textAlign: 'center',
+          background: '#fff',
+          borderRadius: '12px',
+          border: '1px dashed #cbd5e1',
+          margin: '20px 0'
+        }}>
+          <FaFilter style={{ fontSize: '30px', color: '#94a3b8', marginBottom: '10px' }} />
+          <h4 style={{ color: '#0B2545', margin: '0 0 6px 0', fontSize: '16px' }}>
+            {selectedStudent ? 'No Attendance Records Found' : 'Select a Student'}
+          </h4>
+          <p style={{ color: '#64748b', fontSize: '13.5px', margin: 0 }}>
+            {selectedStudent
+              ? `No attendance records found for ${selectedStudentDetails?.fullName || 'the selected student'} between ${startDate} and ${endDate}.`
+              : 'Please choose a student from the dropdown and select the date range, then click "Fetch Report".'}
+          </p>
         </div>
       )}
 
@@ -1745,60 +2037,39 @@ const AttendanceReport = () => {
               </div>
             </div>
           </div>
+          {/* Period-Level Breakdown Pill */}
+          {statusCounts.totalPeriods > 0 && (
+            <div style={{
+              marginTop: '16px',
+              padding: '12px 18px',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px',
+              fontSize: '13px',
+              color: '#475569'
+            }}>
+              <span style={{ fontWeight: 600, color: '#0B2545' }}>
+                📋 Period Attendance Summary:
+              </span>
+              <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                <span>Total Periods: <strong>{statusCounts.totalPeriods}</strong></span>
+                <span style={{ color: '#16a34a' }}>Present: <strong>{statusCounts.present}</strong> ({getStatusPercentage(statusCounts.present, statusCounts.totalPeriods)}%)</span>
+                <span style={{ color: '#dc2626' }}>Absent: <strong>{statusCounts.absent}</strong> ({getStatusPercentage(statusCounts.absent, statusCounts.totalPeriods)}%)</span>
+                <span style={{ color: '#ca8a04' }}>Late: <strong>{statusCounts.late}</strong> ({getStatusPercentage(statusCounts.late, statusCounts.totalPeriods)}%)</span>
+                <span style={{ color: '#ea580c' }}>Half-Day: <strong>{statusCounts['half-day']}</strong> ({getStatusPercentage(statusCounts['half-day'], statusCounts.totalPeriods)}%)</span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {loading && (
-        <div className="loading-message">
-          Loading attendance report...
-        </div>
-      )}
-
-      {reports.length > 0 && reportType === 'student' && (
-        <div className="report-table-container">
-          <h3>
-            Detailed Report - {selectedStudentDetails?.fullName || reports[0]?.studentName || reports[0]?.student?.fullName || 'Student'}
-            ({selectedStudentDetails?.rollNumber || reports[0]?.rollNumber || reports[0]?.student?.rollNumber || 'N/A'})
-            {startDate && endDate ? `(${startDate} to ${endDate})` : `(${new Date().toLocaleDateString()})`}
-          </h3>
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>Roll Number</th>
-                <th>Name</th>
-                <th>Period</th>
-                <th>Status</th>
-                <th>Session</th>
-                <th>Date</th>
-                <th>Remarks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.map((record, idx) => {
-                const period = record.period || record.periodNumber || null;
-                const periodDisplay = period ? `P${period} (${getPeriodTime(period)})` : '-';
-                return (
-                  <tr key={`${record.studentId || idx}-${record.date}-${period || idx}`}>
-                    <td>{record.rollNumber || record.student?.rollNumber || '-'}</td>
-                    <td>{record.studentName || record.student?.fullName || record.fullName || '-'}</td>
-                    <td>{periodDisplay}</td>
-                    <td>
-                      <span className={`status-badge ${record.status || 'not-marked'}`}>
-                        {record.status === 'not-marked' || !record.status ? 'Not Marked' : record.status}
-                      </span>
-                    </td>
-                    <td>{record.session || '-'}</td>
-                    <td>{record.date ? (typeof record.date === 'string' ? record.date : new Date(record.date).toLocaleDateString('en-GB')) : '-'}</td>
-                    <td>{record.remarks || '-'}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {reports.length === 0 && !loading && selectedClass && selectedSection && selectedDate && (
+      {/* Empty State for Class Reports */}
+      {reportType !== 'student' && reports.length === 0 && !loading && selectedClass && selectedSection && selectedDate && (
         <div className="no-data">
           <FaFilter />
           <p>No attendance records found for {selectedClass}-{selectedSection} on {selectedDate}</p>

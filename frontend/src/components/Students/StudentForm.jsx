@@ -71,11 +71,13 @@ const StudentForm = ({ student, onSave, onCancel }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success(
-          <div>
-            <strong>🎉 Student Created Successfully!</strong>
-            <p style={{ margin: '8px 0 0 0', fontSize: '0.9em', color: '#ffffff' }}>
-              User account has been created with default password.
-            </p>
+          <div className="toast-student-wrapper">
+            <div className="toast-student-title">
+              Student Created Successfully!
+            </div>
+            <div className="toast-student-desc">
+              Login account created with password: <span className="toast-pwd-code">Student@123</span>
+            </div>
           </div>,
           {
             position: "top-right",
@@ -116,6 +118,7 @@ const StudentForm = ({ student, onSave, onCancel }) => {
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
+            placeholder="e.g. Kiruthik Bairavan C"
             required
           />
         </div>
@@ -127,8 +130,27 @@ const StudentForm = ({ student, onSave, onCancel }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="e.g. student.22msc@kongu.edu"
             required
           />
+          {!isEditMode && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '6px',
+              padding: '6px 10px',
+              background: '#E0F4FC',
+              border: '1px solid #BAE6FD',
+              borderRadius: '8px',
+              color: '#0369A1',
+              fontSize: '0.82rem',
+              fontWeight: 500
+            }}>
+              <span>🔐</span>
+              <span>Student login account will be automatically created with password: <strong>Student@123</strong></span>
+            </div>
+          )}
         </div>
 
         <div className="form-row">

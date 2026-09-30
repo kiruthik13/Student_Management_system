@@ -1,0 +1,47 @@
+.kec-official-footer {
+  width: 100%;
+  height: 48px;
+  background: #0B2545;
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  font-size: 0.82rem;
+  position: relative;
+  z-index: 30;
+}
+
+.kec-footer-left {
+  font-weight: 400;
+}
+
+.kec-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.kec-footer-link {
+  color: #94A3B8;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.kec-footer-link:hover {
+  color: #FFFFFF;
+}
+
+.kec-footer-sep {
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .kec-official-footer {
+    flex-direction: column;
+    height: auto;
+    padding: 0.85rem 1rem;
+    gap: 0.35rem;
+    text-align: center;
+  }
+}

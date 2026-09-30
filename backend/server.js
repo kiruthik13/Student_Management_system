@@ -1,11 +1,14 @@
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {
+  // Ignore
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const config = require('./config/config');
-
-// Load environment variables
-dotenv.config();
 
 // Import routes
 const adminRoutes = require('./routes/adminRoutes');

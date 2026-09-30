@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
+import KECLoader from '../Common/KECLoader';
 import './StudentProfile.css';
 
 const StudentProfile = () => {
@@ -27,7 +28,7 @@ const StudentProfile = () => {
         }
     };
 
-    if (loading) return <div className="loading">Loading profile...</div>;
+    if (loading) return <KECLoader fullScreen={true} message="Loading student profile..." />;
     if (error) return <div className="error-message">{error}</div>;
     if (!student) return <div className="no-data">No profile data found</div>;
 

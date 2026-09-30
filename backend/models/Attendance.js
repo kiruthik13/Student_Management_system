@@ -192,13 +192,14 @@ attendanceSchema.statics.getStudentStats = async function(studentId, startDate, 
     });
   });
 
+  const effectivePresent = present + late + (halfDay * 0.5);
   return {
     total,
     present,
     absent,
     late,
     halfDay,
-    percentage: total > 0 ? Math.round((present / total) * 100) : 0
+    percentage: total > 0 ? Math.round((effectivePresent / total) * 100) : 0
   };
 };
 

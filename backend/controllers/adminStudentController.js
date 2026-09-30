@@ -64,28 +64,40 @@ exports.createStudent = async (req, res) => {
         console.log('✅ Student profile created:', savedStudent._id);
 
         // Check if User account exists, if not create one
-        console.log('🔍 Checking for existing User account');
+        console.log('🔍 Checking for existing User account for:', email.toLowerCase());
         let user = await User.findOne({ email: email.toLowerCase() });
+        const defaultStudentPassword = password || 'Student@123';
 
         if (!user) {
-            console.log('📝 Creating User account with default password');
+            console.log('📝 Creating User account with default password: Student@123');
             user = new User({
                 fullName,
-                email,
-                password: password || 'student123', // Default password if not provided
+                email: email.toLowerCase(),
+                password: defaultStudentPassword,
                 role: 'student',
                 isActive: true
             });
             await user.save();
-            console.log('✅ User account created:', user._id);
+            console.log('✅ User account created with password Student@123:', user._id);
         } else {
-            console.log('ℹ️ User account already exists:', user._id);
+            console.log('ℹ️ User account already exists for this email, ensuring student role & password:', user._id);
+            user.fullName = fullName;
+            user.role = 'student';
+            user.isActive = true;
+            user.password = defaultStudentPassword;
+            await user.save();
+            console.log('✅ Existing user account updated with password Student@123:', user._id);
         }
 
         console.log('🎉 Student creation completed successfully');
         res.status(201).json({
-            message: 'Student created successfully',
-            student: savedStudent
+            message: 'Student and login account created successfully',
+            student: savedStudent,
+            loginDetails: {
+                email: user.email,
+                defaultPassword: defaultStudentPassword,
+                role: 'student'
+            }
         });
 
     } catch (error) {

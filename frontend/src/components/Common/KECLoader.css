@@ -1,0 +1,196 @@
+/* =========================================================
+   Official KEC Animated Loader - Zoom In / Zoom Out Dots
+   ========================================================= */
+
+.kec-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.kec-loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  user-select: none;
+}
+
+/* Emblem and SVG */
+.kec-loader-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: kecEmblemBreathe 3.6s infinite ease-in-out;
+}
+
+.kec-loader-svg {
+  width: 130px;
+  height: 120px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 14px rgba(0, 153, 216, 0.22));
+}
+
+/* Size Variants */
+.kec-loader-wrapper.small .kec-loader-svg {
+  width: 70px;
+  height: 65px;
+}
+.kec-loader-wrapper.small .kec-loader-brand-title {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.kec-loader-wrapper.large .kec-loader-svg {
+  width: 160px;
+  height: 145px;
+}
+.kec-loader-wrapper.large .kec-loader-brand-title {
+  font-size: 1.45rem;
+  letter-spacing: 2.5px;
+}
+
+/* Zoom In / Zoom Out Dots Animation */
+.kec-zoom-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kecBubbleZoomInOut 2s infinite ease-in-out;
+}
+
+.dot-main {
+  animation-delay: 0s;
+}
+
+.dot-center {
+  animation-delay: 0.28s;
+}
+
+.dot-tr {
+  animation-delay: 0.52s;
+}
+
+.dot-bl {
+  animation-delay: 0.16s;
+}
+
+.dot-br {
+  animation-delay: 0.38s;
+}
+
+/* Keyframes for the zoom-in & zoom-out effect on the dots */
+@keyframes kecBubbleZoomInOut {
+  0% {
+    transform: scale(0.78);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 2px rgba(0, 153, 216, 0.2));
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(0, 153, 216, 0.5));
+  }
+  100% {
+    transform: scale(0.78);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 2px rgba(0, 153, 216, 0.2));
+  }
+}
+
+@keyframes kecEmblemBreathe {
+  0%, 100% {
+    transform: scale(0.97);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+/* College Title matching second screenshot exactly */
+.kec-loader-brand-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brand-word-kongu {
+  color: #7CB342; /* Official Leaf Green */
+}
+
+.brand-word-eng {
+  color: #0099D8; /* Official Cyan */
+}
+
+.brand-word-college {
+  color: #7CB342; /* Official Leaf Green */
+}
+
+/* 3 Sequential Zooming Dots at the bottom */
+.kec-loader-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 1.1rem;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: kecPulseDotZoom 1.4s infinite ease-in-out both;
+}
+
+.p-dot-1 {
+  background: #0099D8;
+  animation-delay: -0.32s;
+}
+
+.p-dot-2 {
+  background: #26A69A;
+  animation-delay: -0.16s;
+}
+
+.p-dot-3 {
+  background: #7CB342;
+  animation-delay: 0s;
+}
+
+@keyframes kecPulseDotZoom {
+  0%, 80%, 100% {
+    transform: scale(0.4);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1.3);
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor;
+  }
+}
+
+/* Optional message */
+.kec-loader-message {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  color: #64748B;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="kecGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0099D8" />
+      <stop offset="100%" stopColor="#26A69A" />
+    </linearGradient>
+    <linearGradient id="kecGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#26A69A" />
+      <stop offset="100%" stopColor="#7CB342" />
+    </linearGradient>
+    <linearGradient id="kecGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#00A4E4" />
+      <stop offset="100%" stopColor="#8BC34A" />
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="38" r="18" fill="url(#kecGrad1)" />
+  <circle cx="56" cy="54" r="14" fill="url(#kecGrad2)" opacity="0.95" />
+  <circle cx="44" cy="68" r="9" fill="url(#kecGrad1)" opacity="0.9" />
+  <circle cx="68" cy="58" r="7" fill="url(#kecGrad3)" opacity="0.85" />
+  <circle cx="70" cy="34" r="5" fill="#7CB342" opacity="0.9" />
+</svg>

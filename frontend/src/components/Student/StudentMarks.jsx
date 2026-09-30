@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_ENDPOINTS } from '../../config/api';
+import KECLoader from '../Common/KECLoader';
 import '../Dashboard/Dashboard.css';
 
 const StudentMarks = () => {
@@ -47,7 +48,11 @@ const StudentMarks = () => {
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan="5">Loading...</td></tr>
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center', padding: '2.5rem 0' }}>
+                                        <KECLoader size="small" message="Loading marks..." />
+                                    </td>
+                                </tr>
                             ) : marks.length > 0 ? (
                                 marks.map((mark, index) => (
                                     <tr key={index}>

@@ -5,6 +5,10 @@ import { toast } from 'react-toastify';
 import { API_ENDPOINTS } from '../../config/api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import KECLogo from '../Common/KECLogo';
+import KECTopRibbon from '../Common/KECTopRibbon';
+import KECFooter from '../Common/KECFooter';
+import KECLoader from '../Common/KECLoader';
 import './StudentDashboard.css';
 
 const StudentDashboard = () => {
@@ -61,16 +65,19 @@ const StudentDashboard = () => {
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
 
-            // Colors
-            const primaryColor = [102, 126, 234]; // #667eea
-            const secondaryColor = [118, 75, 162]; // #764ba2
-            const textDark = [51, 51, 51];
-            const textLight = [102, 102, 102];
+            // KEC Official Brand Colors
+            const primaryColor = [0, 153, 216]; // #0099D8 KEC Cyan
+            const secondaryColor = [124, 179, 66]; // #7CB342 KEC Green
+            const navyColor = [11, 37, 69]; // #0B2545 KEC Navy
+            const textDark = [30, 41, 59];
+            const textLight = [100, 116, 139];
 
             // === HEADER SECTION ===
-            // Gradient background (simulated with rectangles)
-            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            // KEC Navy header with Cyan accent stripe
+            doc.setFillColor(navyColor[0], navyColor[1], navyColor[2]);
             doc.rect(0, 0, pageWidth, 45, 'F');
+            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.rect(0, 42.5, pageWidth, 2.5, 'F');
 
             // College name
             doc.setTextColor(255, 255, 255);
@@ -137,8 +144,9 @@ const StudentDashboard = () => {
             // Attendance statistics
             const attendancePercentage = stats?.attendancePercentage || 0;
             const totalDays = stats?.totalDays || 0;
-            const presentDays = Math.round((attendancePercentage / 100) * totalDays);
-            const absentDays = totalDays - presentDays;
+            const presentDays = stats?.presentDays !== undefined ? stats.presentDays : Math.round((attendancePercentage / 100) * totalDays);
+            const absentDays = stats?.absentDays !== undefined ? stats.absentDays : Math.max(0, totalDays - presentDays);
+            const halfDays = stats?.halfDays || 0;
 
             // Attendance percentage with color indicator
             doc.setFontSize(10);
@@ -160,15 +168,22 @@ const StudentDashboard = () => {
             yPos += 8;
 
             // Attendance details table
+            const attendanceTableBody = [
+                ['Total Days', totalDays.toString()],
+                ['Full Present Days', presentDays.toString()]
+            ];
+            if (halfDays > 0) {
+                attendanceTableBody.push(['Half-Day Days', halfDays.toString()]);
+            }
+            attendanceTableBody.push(
+                ['Absent Days', absentDays.toString()],
+                ['Attendance %', `${attendancePercentage}%`]
+            );
+
             doc.autoTable({
                 startY: yPos,
                 head: [['Metric', 'Value']],
-                body: [
-                    ['Total Days', totalDays.toString()],
-                    ['Present Days', presentDays.toString()],
-                    ['Absent Days', absentDays.toString()],
-                    ['Attendance %', `${attendancePercentage}%`]
-                ],
+                body: attendanceTableBody,
                 theme: 'grid',
                 headStyles: {
                     fillColor: primaryColor,
@@ -283,19 +298,17 @@ const StudentDashboard = () => {
         toast.info('Excel Download feature coming soon!');
     };
 
-    if (loading) return (
-        <div className="student-dashboard" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="loading-spinner"></div>
-        </div>
-    );
+    if (loading) {
+        return <KECLoader fullScreen={true} message="Loading Student Portal..." />;
+    }
 
     return (
         <div className="student-dashboard">
             {/* Navbar */}
             <nav className="student-navbar">
-                <div className="nav-brand">
-                    <FaUserGraduate />
-                    <span>Student Portal</span>
+                <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <KECLogo size="small" align="left" showCredentials={false} />
+                    <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: '600', borderLeft: '1px solid #CBD5E1', paddingLeft: '0.75rem' }}>Student Portal</span>
                 </div>
                 <div className="nav-user">
                     <div className="user-info">
@@ -386,6 +399,7 @@ const StudentDashboard = () => {
                     </div>
                 </div>
             </div>
+            <KECFooter />
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_ENDPOINTS } from '../../config/api';
+import KECLoader from '../Common/KECLoader';
 import '../Dashboard/Dashboard.css'; // Use shared styles
 
 const StudentAttendance = () => {
@@ -45,7 +46,11 @@ const StudentAttendance = () => {
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan="3">Loading...</td></tr>
+                                <tr>
+                                    <td colSpan="3" style={{ textAlign: 'center', padding: '2.5rem 0' }}>
+                                        <KECLoader size="small" message="Loading attendance..." />
+                                    </td>
+                                </tr>
                             ) : attendance.length > 0 ? (
                                 attendance.map((record, index) => (
                                     <tr key={index}>

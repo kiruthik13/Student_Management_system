@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../config/api';
+import KECLoader from '../Common/KECLoader';
 import './Students.css';
 
 const StudentList = ({ onViewStudent, onEditStudent }) => {
@@ -44,7 +45,13 @@ const StudentList = ({ onViewStudent, onEditStudent }) => {
     }
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ padding: '3rem 0', display: 'flex', justifyContent: 'center' }}>
+        <KECLoader message="Loading students..." size="small" />
+      </div>
+    );
+  }
 
   return (
     <div className="student-list-container">

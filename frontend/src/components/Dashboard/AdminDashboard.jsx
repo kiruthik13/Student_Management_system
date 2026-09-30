@@ -13,6 +13,10 @@ import MarksEntryPage from '../Marks/MarksEntryPage';
 import ConsolidatedMarksPage from '../Marks/ConsolidatedMarksPage';
 import { API_ENDPOINTS } from '../../config/api';
 import { getStudents, getAttendanceToday, getHealth } from '../../utils/api';
+import KECLogo from '../Common/KECLogo';
+import KECTopRibbon from '../Common/KECTopRibbon';
+import KECFooter from '../Common/KECFooter';
+import KECLoader from '../Common/KECLoader';
 import './Dashboard.css';
 
 const AdminDashboard = ({ onLogout }) => {
@@ -24,6 +28,7 @@ const AdminDashboard = ({ onLogout }) => {
     totalStudents: 0,
     presentStudents: 0,
     absentStudents: 0,
+    halfDayStudents: 0,
     studentsWithNoAttendance: 0,
     attendanceRate: 0,
     totalPresentPeriods: 0,
@@ -144,6 +149,7 @@ const AdminDashboard = ({ onLogout }) => {
 
       // Process today's attendance data
       let presentStudents = 0;
+      let halfDayStudents = 0;
       let absentStudents = 0;
       let totalPresentPeriods = 0;
       let totalMarkedPeriods = 0;
@@ -157,49 +163,56 @@ const AdminDashboard = ({ onLogout }) => {
         if (!studentAttendanceMap[studentId]) {
           studentAttendanceMap[studentId] = {
             presentPeriods: 0,
+            absentPeriods: 0,
             totalPeriods: 0,
             hasAnyAttendance: false
           };
         }
 
-        // Count periods based on the attendance record structure
-        if (record.forenoon && record.forenoon.periods) {
-          record.forenoon.periods.forEach(period => {
+        const processPeriod = (period) => {
+          const st = (period.status || '').toLowerCase();
+          if (st && st !== 'not-marked') {
             studentAttendanceMap[studentId].totalPeriods++;
             studentAttendanceMap[studentId].hasAnyAttendance = true;
-            if (period.status === 'present') {
-              studentAttendanceMap[studentId].presentPeriods++;
+            if (st === 'present' || st === 'late') {
+              studentAttendanceMap[studentId].presentPeriods += 1;
+            } else if (st === 'half-day') {
+              studentAttendanceMap[studentId].presentPeriods += 0.5;
+            } else if (st === 'absent') {
+              studentAttendanceMap[studentId].absentPeriods += 1;
             }
-          });
+          }
+        };
+
+        if (record.forenoon && record.forenoon.periods) {
+          record.forenoon.periods.forEach(processPeriod);
         }
 
         if (record.afternoon && record.afternoon.periods) {
-          record.afternoon.periods.forEach(period => {
-            studentAttendanceMap[studentId].totalPeriods++;
-            studentAttendanceMap[studentId].hasAnyAttendance = true;
-            if (period.status === 'present') {
-              studentAttendanceMap[studentId].presentPeriods++;
-            }
-          });
+          record.afternoon.periods.forEach(processPeriod);
         }
       });
 
       console.log('Today\'s student attendance map:', studentAttendanceMap);
 
-      // Calculate statistics for today only
+      // Calculate statistics for today with proper academic rules
       studentsData.students.forEach(student => {
         const studentId = student._id;
         const studentData = studentAttendanceMap[studentId];
 
-        if (studentData && studentData.hasAnyAttendance) {
+        if (studentData && studentData.hasAnyAttendance && studentData.totalPeriods > 0) {
           totalPresentPeriods += studentData.presentPeriods;
           totalMarkedPeriods += studentData.totalPeriods;
 
-          // A student is considered present if they have at least one present period today
-          if (studentData.presentPeriods > 0) {
+          if (studentData.absentPeriods === 0 && studentData.presentPeriods > 0) {
+            // Attended all marked periods
             presentStudents++;
-          } else {
+          } else if (studentData.presentPeriods === 0) {
+            // Missed all marked periods
             absentStudents++;
+          } else {
+            // Attended some periods, missed some
+            halfDayStudents++;
           }
         } else {
           studentsWithNoAttendance++;
@@ -215,6 +228,7 @@ const AdminDashboard = ({ onLogout }) => {
         totalStudents,
         presentStudents,
         absentStudents,
+        halfDayStudents,
         studentsWithNoAttendance,
         attendanceRate,
         totalPresentPeriods,
@@ -333,6 +347,17 @@ const AdminDashboard = ({ onLogout }) => {
                 </div>
                 <div className="stat-value">{stats.absentStudents}</div>
                 <div className="stat-description">Students absent today</div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-header">
+                  <span className="stat-title">Half-Day Today</span>
+                  <div className="stat-icon" style={{ background: '#FFF3E0', color: '#E65100' }}>
+                    <FaClock />
+                  </div>
+                </div>
+                <div className="stat-value">{stats.halfDayStudents || 0}</div>
+                <div className="stat-description">Partial attendance today</div>
               </div>
 
               <div className="stat-card">
@@ -629,53 +654,46 @@ const AdminDashboard = ({ onLogout }) => {
   };
 
   if (isLoading) {
-    return (
-      <div className="loading-overlay">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <KECLoader fullScreen={true} message="Loading Admin Dashboard..." />;
   }
 
   return (
-    <div className="dashboard-container">
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <div className="college-logo-section">
-            <div className="college-logo">
-              <FaGraduationCap />
-            </div>
-            <div className="college-info">
-              <h2 className="college-name">KONGU ENGINEERING COLLEGE</h2>
-              <p className="college-subtitle">(Autonomous)</p>
-              <p className="college-details">Affiliated to Anna University | Accredited by NAAC with A++ Grade</p>
-              <p className="college-address">Perundurai Erode - 638060 Tamilnadu India</p>
+    <div className="dashboard-page-wrapper">
+      <KECTopRibbon />
+      <div className="dashboard-container">
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <div className="kec-sidebar-logo-box">
+              <KECLogo size="small" align="left" showCredentials={false} />
             </div>
           </div>
-        </div>
 
-        <nav>
+        <nav className="sidebar-nav">
           <ul className="nav-menu">
             {navigationItems.map((item) => (
               <li key={item.id} className="nav-item">
                 <button
+                  type="button"
                   className={`nav-link ${currentView === item.id ? 'active' : ''}`}
                   onClick={() => handleNavigation(item.id)}
                 >
                   <span className="nav-icon">{item.icon}</span>
-                  {item.label}
+                  <span className="nav-label">{item.label}</span>
                 </button>
               </li>
             ))}
           </ul>
         </nav>
 
-        <button className="logout-button" onClick={handleLogout}>
+        <button type="button" className="logout-button" onClick={handleLogout}>
           <FaSignOutAlt />
-          Logout
+          <span>Logout</span>
         </button>
       </aside>
 
       {renderContent()}
+    </div>
+    <KECFooter />
     </div>
   );
 };

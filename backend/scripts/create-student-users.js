@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 const User = require('../models/User');
 const Student = require('../models/Student');
-
-// MongoDB connection - use the correct URI from config
-const mongoUri = 'mongodb+srv://mrbairavan:kiruthik-13@cluster0.fhhvceb.mongodb.net/student-attendance-tracker?retryWrites=true&w=majority';
+const config = require('../config/config');
 
 async function createUserAccountsForStudents() {
     try {
         console.log('🔗 Connecting to MongoDB...');
-        await mongoose.connect(mongoUri);
+        await mongoose.connect(config.mongoUri);
         console.log('✅ Connected to MongoDB\n');
 
         // Get all students
@@ -16,33 +16,38 @@ async function createUserAccountsForStudents() {
         console.log(`📊 Found ${students.length} students in database\n`);
 
         let created = 0;
-        let skipped = 0;
+        let updated = 0;
         let errors = 0;
 
         for (const student of students) {
             try {
                 // Check if User account already exists
-                const existingUser = await User.findOne({ email: student.email.toLowerCase() });
+                let user = await User.findOne({ email: student.email.toLowerCase() });
 
-                if (existingUser) {
-                    console.log(`⏭️  Skipped: ${student.fullName} (${student.email}) - User account already exists`);
-                    skipped++;
+                if (user) {
+                    user.fullName = student.fullName;
+                    user.role = 'student';
+                    user.isActive = true;
+                    user.password = 'Student@123';
+                    await user.save();
+                    console.log(`🔄 Updated password to Student@123: ${student.fullName} (${student.email})`);
+                    updated++;
                 } else {
-                    // Create User account with default password
-                    const user = new User({
+                    // Create User account with Student@123
+                    user = new User({
                         fullName: student.fullName,
                         email: student.email.toLowerCase(),
-                        password: 'student123', // Default password
+                        password: 'Student@123',
                         role: 'student',
                         isActive: true
                     });
 
                     await user.save();
-                    console.log(`✅ Created: ${student.fullName} (${student.email}) - Password: student123`);
+                    console.log(`✅ Created: ${student.fullName} (${student.email}) - Password: Student@123`);
                     created++;
                 }
             } catch (error) {
-                console.error(`❌ Error creating user for ${student.fullName}: ${error.message}`);
+                console.error(`❌ Error with student ${student.fullName}: ${error.message}`);
                 errors++;
             }
         }
@@ -50,11 +55,11 @@ async function createUserAccountsForStudents() {
         console.log('\n' + '='.repeat(60));
         console.log('📈 Summary:');
         console.log(`   ✅ Created: ${created} user accounts`);
-        console.log(`   ⏭️  Skipped: ${skipped} (already exist)`);
+        console.log(`   🔄 Updated: ${updated} user accounts`);
         console.log(`   ❌ Errors: ${errors}`);
         console.log('='.repeat(60));
-        console.log('\n🎉 Migration completed!');
-        console.log('🔑 All students can now login with password: student123\n');
+        console.log('\n🎉 Completed!');
+        console.log('🔑 All students can now login with password: Student@123\n');
 
     } catch (error) {
         console.error('❌ Migration failed:', error);

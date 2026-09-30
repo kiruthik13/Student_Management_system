@@ -113,7 +113,7 @@ export default function AttendanceMarking() {
     };
 
     fetchStudents();
-  }, [selectedClass, selectedSection]);
+  }, [selectedClass, selectedSection, selectedDate]);
 
   const handleAttendanceChange = (studentId, period, status) => {
     setAttendanceData(prev => ({

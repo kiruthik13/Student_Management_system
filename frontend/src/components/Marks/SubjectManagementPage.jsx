@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaList } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../../config/api';
+import KECLoader from '../Common/KECLoader';
 
 const SubjectManagementPage = () => {
     const [subjects, setSubjects] = useState([]);
@@ -150,8 +151,8 @@ const SubjectManagementPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="loading" style={{ minHeight: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div className="loading-spinner"></div>
+                    <div style={{ minHeight: '220px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <KECLoader message="Loading subjects..." size="small" />
                     </div>
                 ) : (
                     <div className="data-table-container">

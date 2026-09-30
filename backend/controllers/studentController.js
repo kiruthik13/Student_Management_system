@@ -21,40 +21,75 @@ exports.getDashboardStats = async (req, res) => {
         const attendanceRecords = await Attendance.find({ student: student._id });
         let totalPeriods = 0;
         let present = 0;
+        let absent = 0;
+        const uniqueDates = new Set();
+        let presentDays = 0;
+        let absentDays = 0;
+        let halfDays = 0;
 
         attendanceRecords.forEach(record => {
-            // Count forenoon
-            record.forenoon.periods.forEach(p => {
-                totalPeriods++;
-                if (p.status === 'present') present++;
-            });
-            // Count afternoon
-            record.afternoon.periods.forEach(p => {
-                totalPeriods++;
-                if (p.status === 'present') present++;
-            });
+            const dateStr = record.date ? new Date(record.date).toISOString().split('T')[0] : null;
+            if (dateStr) uniqueDates.add(dateStr);
+
+            let dayMarked = 0;
+            let dayAttended = 0;
+
+            const processPeriod = (p) => {
+                const st = (p.status || '').toLowerCase();
+                if (st && st !== 'not-marked') {
+                    totalPeriods++;
+                    dayMarked++;
+                    if (st === 'present' || st === 'late') {
+                        present += 1;
+                        dayAttended += 1;
+                    } else if (st === 'half-day') {
+                        present += 0.5;
+                        dayAttended += 0.5;
+                    } else if (st === 'absent') {
+                        absent++;
+                    }
+                }
+            };
+
+            if (record.forenoon && record.forenoon.periods) {
+                record.forenoon.periods.forEach(processPeriod);
+            }
+            if (record.afternoon && record.afternoon.periods) {
+                record.afternoon.periods.forEach(processPeriod);
+            }
+
+            if (dayMarked > 0) {
+                if (dayAttended === dayMarked) {
+                    presentDays++;
+                } else if (dayAttended === 0) {
+                    absentDays++;
+                } else {
+                    halfDays++;
+                }
+            }
         });
 
+        const totalDays = uniqueDates.size;
         const attendancePercentage = totalPeriods > 0 ? ((present / totalPeriods) * 100).toFixed(1) : 0;
 
         // 2. Total Subjects
-        // Assuming student has subjects based on class/section, or just count all subjects for now?
-        // User didn't specify class-subject mapping, so we count total subjects or marks.
-        // Let's count subjects they have marks for, or just all subjects if generic.
-        // Better: Count unique subjects in Marks collection for this student? 
-        // Or just Total Subject count in system? "Total subjects" usually means enrolled subjects.
-        // Let's return total subjects in system for now (simple).
         const totalSubjects = await Subject.countDocuments();
 
         // 3. Total Marks Received
         const marks = await Mark.find({ studentId: student._id });
-        const totalMarks = marks.reduce((sum, mark) => sum + mark.marksObtained, 0);
+        const totalMarks = marks.reduce((sum, mark) => sum + (mark.marksObtained || 0), 0);
 
         res.json({
             studentName: student.fullName,
             rollNumber: student.rollNumber,
             stats: {
                 attendancePercentage,
+                totalDays,
+                presentDays,
+                absentDays,
+                halfDays,
+                totalPeriods,
+                presentPeriods: present,
                 totalSubjects,
                 totalMarks
             }
@@ -73,7 +108,6 @@ exports.getAttendance = async (req, res) => {
         if (!student) return res.status(404).json({ message: 'Student profile not found' });
 
         const { month, year } = req.query;
-        // Filter by month/year if provided
 
         let query = { student: student._id };
         if (month && year) {
@@ -84,20 +118,43 @@ exports.getAttendance = async (req, res) => {
 
         const attendance = await Attendance.find(query).sort({ date: -1 });
 
-        // Transform for UI (Daily status)
-        // A day is "Present" if present in all marked periods? Or calculate % per day?
-        // Simple View: Table with Date, Status.
-        // Logic: If any period is 'absent', day is 'Absent' or 'Partial'? 
-        // Let's show "Present" if > 50% periods present, else "Absent".
+        // Transform for UI (Daily status with accurate academic classification)
         const history = attendance.map(record => {
             let pCount = 0;
             let total = 0;
-            [...record.forenoon.periods, ...record.afternoon.periods].forEach(p => {
-                total++;
-                if (p.status === 'present') pCount++;
-            });
+            let absentCount = 0;
 
-            const status = total === 0 ? 'Holiday' : (pCount === total ? 'Present' : (pCount > 0 ? 'Partial' : 'Absent'));
+            const processPeriod = (p) => {
+                const st = (p.status || '').toLowerCase();
+                if (st && st !== 'not-marked') {
+                    total++;
+                    if (st === 'present' || st === 'late') {
+                        pCount += 1;
+                    } else if (st === 'half-day') {
+                        pCount += 0.5;
+                    } else if (st === 'absent') {
+                        absentCount += 1;
+                    }
+                }
+            };
+
+            if (record.forenoon && record.forenoon.periods) {
+                record.forenoon.periods.forEach(processPeriod);
+            }
+            if (record.afternoon && record.afternoon.periods) {
+                record.afternoon.periods.forEach(processPeriod);
+            }
+
+            let status = 'Not Marked';
+            if (total > 0) {
+                if (absentCount === 0 && pCount > 0) {
+                    status = 'Present';
+                } else if (pCount === 0) {
+                    status = 'Absent';
+                } else {
+                    status = 'Half-Day';
+                }
+            }
 
             return {
                 date: record.date,
@@ -125,14 +182,16 @@ exports.getMarks = async (req, res) => {
             .populate('subjectId', 'name code maxMarks')
             .sort({ createdAt: -1 });
 
-        const formattedMarks = marks.map(m => ({
-            subjectName: m.subjectId.name,
-            subjectCode: m.subjectId.code,
-            examType: m.examType,
-            marksObtained: m.marksObtained,
-            maxMarks: m.subjectId.maxMarks,
-            percentage: ((m.marksObtained / m.subjectId.maxMarks) * 100).toFixed(2)
-        }));
+        const formattedMarks = marks
+            .filter(m => m.subjectId)
+            .map(m => ({
+                subjectName: m.subjectId.name,
+                subjectCode: m.subjectId.code,
+                examType: m.examType,
+                marksObtained: m.marksObtained,
+                maxMarks: m.subjectId.maxMarks,
+                percentage: m.subjectId.maxMarks > 0 ? ((m.marksObtained / m.subjectId.maxMarks) * 100).toFixed(2) : '0.00'
+            }));
 
         res.json({ marks: formattedMarks });
 
@@ -141,6 +200,7 @@ exports.getMarks = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 // GET /student/profile
 exports.getProfile = async (req, res) => {
     try {
