@@ -8,6 +8,8 @@ import Login from './components/Auth/Login';
 import StudentLogin from './components/Auth/StudentLogin';
 import AdminLogin from './components/Auth/AdminLogin';
 import Register from './components/Auth/Register';
+import StudentRegister from './components/Auth/StudentRegister';
+import AdminRegister from './components/Auth/AdminRegister';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 // Admin Components
@@ -23,14 +25,24 @@ import './App.css';
 
 function App() {
   const DEPLOY_ROLE = import.meta.env.VITE_APP_ROLE;
+  const isStudentHost = typeof window !== 'undefined' && window.location.hostname.includes('student');
+  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.includes('admin');
+  const resolvedRole = DEPLOY_ROLE || (isStudentHost ? 'student' : isAdminHost ? 'admin' : null);
 
   // Determine default login redirect based on deployment role
   const defaultLoginPath =
-    DEPLOY_ROLE === 'student'
+    resolvedRole === 'student'
       ? '/student-login'
-      : DEPLOY_ROLE === 'admin'
+      : resolvedRole === 'admin'
       ? '/admin-login'
       : '/login';
+
+  const defaultRegisterPath =
+    resolvedRole === 'student'
+      ? '/student-register'
+      : resolvedRole === 'admin'
+      ? '/admin-register'
+      : '/register';
 
   return (
     <div className="App">
@@ -39,31 +51,51 @@ function App() {
         <Route path="/" element={<Navigate to={defaultLoginPath} replace />} />
 
         {/* Public / Role-specific Login Routes */}
-        {(DEPLOY_ROLE === 'student' || !DEPLOY_ROLE) && (
+        {(resolvedRole === 'student' || !resolvedRole) && (
           <Route path="/student-login" element={<StudentLogin />} />
         )}
 
-        {(DEPLOY_ROLE === 'admin' || !DEPLOY_ROLE) && (
+        {(resolvedRole === 'admin' || !resolvedRole) && (
           <Route path="/admin-login" element={<AdminLogin />} />
+        )}
+
+        {/* Public / Role-specific Register Routes */}
+        {(resolvedRole === 'student' || !resolvedRole) && (
+          <Route path="/student-register" element={<StudentRegister />} />
+        )}
+
+        {(resolvedRole === 'admin' || !resolvedRole) && (
+          <Route path="/admin-register" element={<AdminRegister />} />
         )}
 
         {/* Generic Login / Register */}
         <Route
           path="/login"
           element={
-            DEPLOY_ROLE === 'student' ? (
+            resolvedRole === 'student' ? (
               <Navigate to="/student-login" replace />
-            ) : DEPLOY_ROLE === 'admin' ? (
+            ) : resolvedRole === 'admin' ? (
               <Navigate to="/admin-login" replace />
             ) : (
               <Login />
             )
           }
         />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={
+            resolvedRole === 'student' ? (
+              <Navigate to="/student-register" replace />
+            ) : resolvedRole === 'admin' ? (
+              <Navigate to="/admin-register" replace />
+            ) : (
+              <Register />
+            )
+          }
+        />
 
         {/* Admin Routes - Protected (hidden on student deployment) */}
-        {DEPLOY_ROLE !== 'student' && (
+        {resolvedRole !== 'student' && (
           <>
             <Route
               path="/dashboard/*"
@@ -85,7 +117,7 @@ function App() {
         )}
 
         {/* Student Routes - Protected (hidden on admin deployment) */}
-        {DEPLOY_ROLE !== 'admin' && (
+        {resolvedRole !== 'admin' && (
           <>
             <Route
               path="/student/dashboard"

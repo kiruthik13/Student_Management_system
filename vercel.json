@@ -19,7 +19,7 @@
             "dest": "backend/server.js"
         },
         {
-            "src": "/(student-login|admin-login|login|register|dashboard|student|admin).*",
+            "src": "/(student-login|admin-login|student-register|admin-register|login|register|dashboard|student|admin).*",
             "dest": "frontend/dist/index.html"
         },
         {

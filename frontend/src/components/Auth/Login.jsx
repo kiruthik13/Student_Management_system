@@ -21,10 +21,15 @@ import './KECLoginHero.css';
 
 const Login = ({ fixedRole }) => {
   const navigate = useNavigate();
+  const DEPLOY_ROLE = import.meta.env.VITE_APP_ROLE;
+  const isStudentHost = typeof window !== 'undefined' && window.location.hostname.includes('student');
+  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.includes('admin');
+  const effectiveRole = fixedRole || (DEPLOY_ROLE === 'student' ? 'student' : DEPLOY_ROLE === 'admin' ? 'admin' : (isStudentHost ? 'student' : (isAdminHost ? 'admin' : null)));
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: fixedRole || 'student'
+    role: effectiveRole || 'student'
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -102,8 +107,8 @@ const Login = ({ fixedRole }) => {
         if (formData.role !== user.role) {
           console.warn(`Warning: Login role ${formData.role} does not match user role ${user.role}`);
 
-          if (fixedRole) {
-            const roleLabel = fixedRole === 'admin' ? 'Admin' : 'Student';
+          if (effectiveRole) {
+            const roleLabel = effectiveRole === 'admin' ? 'Admin' : 'Student';
             setErrors({ general: `Invalid credentials for ${roleLabel} login. Please use the correct login page.` });
             setIsLoading(false);
             return;
@@ -240,8 +245,18 @@ const Login = ({ fixedRole }) => {
                   <span style={{ fontWeight: 800, color: '#7CB342' }}>COLLEGE</span>
                 </div>
 
-                <h2 className="kec-portal-heading">Attendance Portal</h2>
-                <p className="kec-portal-subtitle">Sign in to manage and track attendance</p>
+                <h2 className="kec-portal-heading">
+                  {effectiveRole === 'student'
+                    ? 'Student Portal'
+                    : effectiveRole === 'admin'
+                    ? 'Admin Portal'
+                    : 'Attendance Portal'}
+                </h2>
+                <p className="kec-portal-subtitle">
+                  {effectiveRole === 'admin'
+                    ? 'Sign in to manage student attendance and records'
+                    : 'Sign in to access student attendance portal'}
+                </p>
               </div>
 
               {/* Status / Error Alerts */}
@@ -260,7 +275,7 @@ const Login = ({ fixedRole }) => {
               )}
 
               {/* Role Toggle Pill Bar */}
-              {!fixedRole && (
+              {!effectiveRole && (
                 <div className="kec-role-pill-bar">
                   <button
                     type="button"
@@ -368,7 +383,10 @@ const Login = ({ fixedRole }) => {
                   <button
                     type="button"
                     className="kec-card-register-link"
-                    onClick={() => navigate('/register')}
+                    onClick={() => {
+                      const targetRegister = effectiveRole === 'student' ? '/student-register' : effectiveRole === 'admin' ? '/admin-register' : '/register';
+                      navigate(targetRegister);
+                    }}
                   >
                     Create one here
                   </button>

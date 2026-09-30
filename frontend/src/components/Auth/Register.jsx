@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FaGraduationCap,
@@ -20,15 +20,34 @@ import KECMainNavbar from '../Common/KECMainNavbar';
 import KECFooter from '../Common/KECFooter';
 import './KECLoginHero.css';
 
-const Register = () => {
+const Register = ({ fixedRole }) => {
   const navigate = useNavigate();
+  const DEPLOY_ROLE = import.meta.env.VITE_APP_ROLE;
+  const isStudentHost = typeof window !== 'undefined' && window.location.hostname.includes('student');
+  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.includes('admin');
+  const effectiveRole = fixedRole || (DEPLOY_ROLE === 'student' ? 'student' : DEPLOY_ROLE === 'admin' ? 'admin' : (isStudentHost ? 'student' : (isAdminHost ? 'admin' : null)));
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'student'
+    role: effectiveRole || 'student'
   });
+
+  useEffect(() => {
+    if (effectiveRole) {
+      setFormData(prev => ({ ...prev, role: effectiveRole }));
+    }
+  }, [effectiveRole]);
+
+  const targetLoginPath =
+    effectiveRole === 'student'
+      ? '/student-login'
+      : effectiveRole === 'admin'
+      ? '/admin-login'
+      : '/login';
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -112,7 +131,7 @@ const Register = () => {
           fullName: formData.name,
           email: formData.email,
           password: formData.password,
-          role: formData.role
+          role: effectiveRole || formData.role
         }),
       });
 
@@ -125,12 +144,12 @@ const Register = () => {
           email: '',
           password: '',
           confirmPassword: '',
-          role: 'student'
+          role: effectiveRole || 'student'
         });
 
         // Auto switch to login after 1.5 seconds
         setTimeout(() => {
-          navigate('/login');
+          navigate(targetLoginPath);
         }, 1500);
       } else {
         setErrors({ general: data.message || 'Registration failed. Please try again.' });
@@ -248,8 +267,18 @@ const Register = () => {
                   <span style={{ fontWeight: 800, color: '#7CB342' }}>COLLEGE</span>
                 </div>
 
-                <h2 className="kec-portal-heading">Create Account</h2>
-                <p className="kec-portal-subtitle">Register to access student attendance portal</p>
+                <h2 className="kec-portal-heading">
+                  {effectiveRole === 'student'
+                    ? 'Student Registration'
+                    : effectiveRole === 'admin'
+                    ? 'Admin Registration'
+                    : 'Create Account'}
+                </h2>
+                <p className="kec-portal-subtitle">
+                  {effectiveRole === 'admin'
+                    ? 'Register to access admin management portal'
+                    : 'Register to access student attendance portal'}
+                </p>
               </div>
 
               {/* Status / Error Alerts */}
@@ -267,23 +296,25 @@ const Register = () => {
                 </div>
               )}
 
-              {/* Role Toggle Pill Bar */}
-              <div className="kec-role-pill-bar">
-                <button
-                  type="button"
-                  className={`kec-role-pill-btn ${formData.role === 'student' ? 'active student' : ''}`}
-                  onClick={() => handleRoleChange('student')}
-                >
-                  <FaUserGraduate /> Student
-                </button>
-                <button
-                  type="button"
-                  className={`kec-role-pill-btn ${formData.role === 'admin' ? 'active admin' : ''}`}
-                  onClick={() => handleRoleChange('admin')}
-                >
-                  <FaUserShield /> Admin
-                </button>
-              </div>
+              {/* Role Toggle Pill Bar - Hidden when role is fixed */}
+              {!effectiveRole && (
+                <div className="kec-role-pill-bar">
+                  <button
+                    type="button"
+                    className={`kec-role-pill-btn ${formData.role === 'student' ? 'active student' : ''}`}
+                    onClick={() => handleRoleChange('student')}
+                  >
+                    <FaUserGraduate /> Student
+                  </button>
+                  <button
+                    type="button"
+                    className={`kec-role-pill-btn ${formData.role === 'admin' ? 'active admin' : ''}`}
+                    onClick={() => handleRoleChange('admin')}
+                  >
+                    <FaUserShield /> Admin
+                  </button>
+                </div>
+              )}
 
               {/* Registration Form */}
               <form onSubmit={handleSubmit} noValidate>
@@ -454,7 +485,7 @@ const Register = () => {
                   <button
                     type="button"
                     className="kec-card-register-link"
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate(targetLoginPath)}
                   >
                     Sign in here
                   </button>
