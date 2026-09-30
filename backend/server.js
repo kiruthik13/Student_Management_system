@@ -27,6 +27,7 @@ const allowedOrigins = [
   'https://attendance-kiruthik.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://student-attendance-api-2020.onrender.com',
   'https://student-attendance-tracker-w227.onrender.com',
   'https://student-attendance-tracker-gilt.vercel.app',
   'https://student-attendance-tracker-uvbz.vercel.app',
