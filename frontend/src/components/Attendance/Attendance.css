@@ -3,7 +3,7 @@
 .attendance-marking-container,
 .attendance-report-container {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -217,7 +217,8 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;          /* ← horizontal scroll instead of shrink */
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 20px;
 }
 
@@ -232,15 +233,40 @@
 .report-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;       /* let columns size to content */
+  min-width: 900px;         /* ← ensures table doesn't squeeze below readable width */
 }
 
 .attendance-table th,
 .attendance-table td,
 .report-table th,
 .report-table td {
-  padding: 12px;
+  padding: 10px 8px;
   text-align: left;
   border-bottom: 1px solid #e1e5e9;
+  vertical-align: top;
+  min-width: 110px;          /* ← minimum period column width */
+  white-space: normal;
+}
+
+/* First two columns (Roll No, Name) can be narrower and sticky */
+.attendance-table th:nth-child(1),
+.attendance-table td:nth-child(1) {
+  min-width: 80px;
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+  background: #f8f9fa;
+  z-index: 1;
+}
+.attendance-table th:nth-child(2),
+.attendance-table td:nth-child(2) {
+  min-width: 140px;
+  white-space: nowrap;
+  position: sticky;
+  left: 80px;
+  background: #f8f9fa;
+  z-index: 1;
 }
 
 .attendance-table th,
@@ -258,52 +284,91 @@
 /* Status Selector */
 .status-selector {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
+  flex-direction: column;     /* ← stack buttons vertically, one per row */
+  gap: 4px;
+  align-items: stretch;
 }
 
 .status-btn {
   background: white;
   border: 2px solid;
-  padding: 6px 12px;
+  padding: 5px 8px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 4px;
-  min-width: 60px;
   justify-content: center;
+  gap: 4px;
+  width: 100%;               /* ← full width of the td */
+  white-space: nowrap;       /* ← never wrap text mid-word */
+  overflow: hidden;
+  text-overflow: clip;
 }
 
+/* ── Per-status colours (un-selected) ─────────────── */
 .status-btn.present {
   border-color: #28a745;
   color: #28a745;
 }
-
 .status-btn.absent {
   border-color: #dc3545;
   color: #dc3545;
 }
-
 .status-btn.late {
   border-color: #ffc107;
   color: #856404;
 }
-
 .status-btn.half-day {
   border-color: #fd7e14;
   color: #fd7e14;
 }
 
-.status-btn.active {
+/* ── Active (selected) state — fills with the status colour ── */
+.status-btn.present.active {
+  background: #28a745;
+  color: white;
+}
+.status-btn.absent.active {
+  background: #dc3545;
+  color: white;
+}
+.status-btn.late.active {
+  background: #ffc107;
+  color: #333;
+}
+.status-btn.half-day.active {
+  background: #fd7e14;
   color: white;
 }
 
 .status-btn:hover {
-  transform: scale(1.05);
+  filter: brightness(0.92);
+  transform: none;            /* remove scale that causes reflow */
+}
+
+/* Remark input inside attendance td */
+.remark-input {
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  font-size: 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #f9fafb;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.remark-input:focus {
+  border-color: #0099d8;
+  background: white;
+}
+.remark-input::placeholder {
+  color: #9ca3af;
 }
 
 /* Status Icons */

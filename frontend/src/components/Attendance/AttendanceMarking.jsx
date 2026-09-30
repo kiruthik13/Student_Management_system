@@ -294,7 +294,7 @@ export default function AttendanceMarking() {
                           value={attendanceData[student._id]?.[period]?.remarks || ''}
                           onChange={e => handleRemarksChange(student._id, period, e.target.value)}
                           maxLength="200"
-                          style={{ marginTop: 4, width: '90%' }}
+                          className="remark-input"
                         />
                       </td>
                     ))}
