@@ -1,3 +1,4 @@
+/* ── Navbar Container ─────────────────────────────────────── */
 .kec-main-navbar {
   width: 100%;
   height: 68px;
@@ -9,9 +10,10 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid #f1f5f9;
   position: relative;
-  z-index: 40;
+  z-index: 100;
 }
 
+/* ── Left: Logo + Badges ──────────────────────────────────── */
 .kec-nav-left {
   display: flex;
   align-items: center;
@@ -26,6 +28,7 @@
   border-left: 1.5px solid #e2e8f0;
 }
 
+/* ── Right: Nav Links ─────────────────────────────────────── */
 .kec-nav-right {
   display: flex;
   align-items: center;
@@ -34,12 +37,13 @@
 .kec-nav-links {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: 0.25rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+/* ── Individual Nav Item ──────────────────────────────────── */
 .kec-nav-link-item {
   position: relative;
   display: flex;
@@ -51,16 +55,21 @@
 .kec-nav-link {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.92rem;
+  gap: 0.3rem;
+  font-size: 0.865rem;
   font-weight: 600;
   color: #334155;
+  text-decoration: none;
   transition: color 0.2s ease;
-  padding: 0.4rem 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  user-select: none;
 }
 
 .kec-nav-link:hover {
   color: #0099d8;
+  background: #f0f9ff;
 }
 
 .kec-nav-link-item.active .kec-nav-link {
@@ -69,30 +78,124 @@
 }
 
 .kec-home-icon {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #0099d8;
 }
 
+/* ── Chevron ──────────────────────────────────────────────── */
+.kec-nav-chevron {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  transition: transform 0.22s ease, color 0.2s ease;
+  margin-top: 1px;
+}
+.kec-nav-chevron.open {
+  transform: rotate(180deg);
+  color: #0099d8;
+}
+
+/* ── Active underline indicator ──────────────────────────── */
 .kec-active-indicator {
   position: absolute;
   bottom: -6px;
-  left: 0;
-  right: 0;
+  left: 8px;
+  right: 8px;
   height: 3px;
   background: linear-gradient(90deg, #0099d8 0%, #10b981 100%);
   border-radius: 2px;
 }
 
-@media (max-width: 1024px) {
+/* ── Dropdown ─────────────────────────────────────────────── */
+.kec-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 153, 216, 0.06);
+  padding: 0.5rem 0.4rem;
+  z-index: 200;
+  animation: kecDropIn 0.18s ease forwards;
+
+  /* Small arrow pointer */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #e2e8f0;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #ffffff;
+  }
+}
+
+/* Two-column layout for Departments (many items) */
+.kec-dropdown--cols {
+  min-width: 420px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+@keyframes kecDropIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── Dropdown Items ───────────────────────────────────────── */
+.kec-dropdown-item {
+  display: block;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #475569;
+  text-decoration: none;
+  border-radius: 7px;
+  transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+  white-space: nowrap;
+}
+
+.kec-dropdown-item:hover {
+  background: linear-gradient(90deg, #f0f9ff 0%, #f0fdf4 100%);
+  color: #0099d8;
+  padding-left: 1.1rem;
+}
+
+/* ── Responsiveness ───────────────────────────────────────── */
+@media (max-width: 1200px) {
   .kec-nav-badges {
     display: none;
   }
   .kec-nav-links {
-    gap: 1rem;
+    gap: 0;
+  }
+  .kec-nav-link {
+    font-size: 0.80rem;
+    padding: 0.4rem 0.5rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .kec-main-navbar {
     padding: 0 1rem;
     height: 60px;
