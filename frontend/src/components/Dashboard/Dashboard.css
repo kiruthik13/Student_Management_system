@@ -45,7 +45,10 @@
 }
 
 .kec-sidebar-logo-box {
-  padding: 0.25rem 0;
+  padding: 0.5rem 0.25rem 0.75rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* College Logo Section Styles for Dashboard */

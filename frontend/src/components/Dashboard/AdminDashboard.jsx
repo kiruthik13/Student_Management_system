@@ -664,7 +664,7 @@ const AdminDashboard = ({ onLogout }) => {
         <aside className="sidebar">
           <div className="sidebar-header">
             <div className="kec-sidebar-logo-box">
-              <KECLogo size="small" align="left" showCredentials={false} />
+              <KECLogo size="small" align="center" showCredentials={false} />
             </div>
           </div>
 
