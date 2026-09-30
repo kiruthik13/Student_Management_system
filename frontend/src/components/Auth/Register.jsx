@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FaGraduationCap, 
-  FaLock, 
-  FaEye, 
-  FaEyeSlash, 
-  FaUserShield, 
-  FaUserGraduate, 
-  FaBookOpen, 
+import {
+  FaGraduationCap,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaUserShield,
+  FaUserGraduate,
+  FaBookOpen,
   FaUniversity,
   FaUserPlus,
   FaCheck,
@@ -301,7 +301,7 @@ const Register = () => {
                       className={`kec-form-input ${errors.name ? 'error' : ''}`}
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="e.g. Kiruthik Bairavan C"
+                      placeholder="Enter Your Name"
                       autoComplete="name"
                     />
                   </div>
