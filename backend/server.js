@@ -22,17 +22,29 @@ const app = express();
 
 // CORS Configuration - Allow requests from your Vercel frontend
 const allowedOrigins = [
-  'https://attendance-kiruthik.vercel.app', // New Vercel Deployment
-  'https://student-attendance-tracker-w227.onrender.com', // New Render Backend
-  'https://student-attendance-tracker-gilt.vercel.app', // Old Main Vercel deployment
-  'https://student-attendance-tracker-uvbz.vercel.app',
-  'https://student-attendance-tracker-4.onrender.com', // Old Render backend
-  'https://student-attendance-tracker-1-n2l2.onrender.com',
+  'https://kec-student-attendance.vercel.app',
+  'https://kec-admin-attendance.vercel.app',
+  'https://attendance-kiruthik.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://student-attendance-tracker-w227.onrender.com',
+  'https://student-attendance-tracker-gilt.vercel.app',
+  'https://student-attendance-tracker-uvbz.vercel.app',
+  'https://student-attendance-tracker-4.onrender.com',
+  'https://student-attendance-tracker-1-n2l2.onrender.com',
   'https://student-attendance-tracker-git-main-kiruthikbairavans-projects.vercel.app',
   'https://student-attendance-tracke-git-d42d1a-kiruthikbairavans-projects.vercel.app'
 ];
+
+// Dynamically include FRONTEND_URL from environment/config if provided
+if (config.frontendUrl) {
+  config.frontendUrl.split(',').forEach(url => {
+    const cleanUrl = url.trim().replace(/\/+$/, '');
+    if (cleanUrl && !allowedOrigins.includes(cleanUrl)) {
+      allowedOrigins.push(cleanUrl);
+    }
+  });
+}
 
 console.log('🚀 Allowed CORS origins:', allowedOrigins);
 
@@ -46,8 +58,9 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // In production, check against allowed origins
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // In production, check against allowed origins (stripping trailing slash if present)
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
       console.log('❌ CORS blocked origin:', origin);
