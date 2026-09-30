@@ -22,74 +22,108 @@ import StudentProfile from './components/Student/StudentProfile';
 import './App.css';
 
 function App() {
-  // We rely on localStorage and ProtectedRoute for auth state now to handle roles better
+  const DEPLOY_ROLE = import.meta.env.VITE_APP_ROLE;
+
+  // Determine default login redirect based on deployment role
+  const defaultLoginPath =
+    DEPLOY_ROLE === 'student'
+      ? '/student-login'
+      : DEPLOY_ROLE === 'admin'
+      ? '/admin-login'
+      : '/login';
 
   return (
     <div className="App">
       <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/student-login" element={<StudentLogin />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
+        {/* Dynamic Root Route */}
+        <Route path="/" element={<Navigate to={defaultLoginPath} replace />} />
+
+        {/* Public / Role-specific Login Routes */}
+        {(DEPLOY_ROLE === 'student' || !DEPLOY_ROLE) && (
+          <Route path="/student-login" element={<StudentLogin />} />
+        )}
+
+        {(DEPLOY_ROLE === 'admin' || !DEPLOY_ROLE) && (
+          <Route path="/admin-login" element={<AdminLogin />} />
+        )}
+
+        {/* Generic Login / Register */}
+        <Route
+          path="/login"
+          element={
+            DEPLOY_ROLE === 'student' ? (
+              <Navigate to="/student-login" replace />
+            ) : DEPLOY_ROLE === 'admin' ? (
+              <Navigate to="/admin-login" replace />
+            ) : (
+              <Login />
+            )
+          }
+        />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Admin Routes - Protected (hidden on student deployment) */}
+        {DEPLOY_ROLE !== 'student' && (
+          <>
+            <Route
+              path="/dashboard/*"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </>
+        )}
 
-        {/* Admin Routes - Protected */}
-        <Route
-          path="/dashboard/*"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Student Routes - Protected */}
-        <Route
-          path="/student/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student/attendance"
-          element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentAttendance />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student/marks"
-          element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentMarks />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student/profile"
-          element={
-            <ProtectedRoute allowedRoles={['student']}>
-              <StudentProfile />
-            </ProtectedRoute>
-          }
-        />
-
+        {/* Student Routes - Protected (hidden on admin deployment) */}
+        {DEPLOY_ROLE !== 'admin' && (
+          <>
+            <Route
+              path="/student/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/attendance"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentAttendance />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/marks"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentMarks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/profile"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentProfile />
+                </ProtectedRoute>
+              }
+            />
+          </>
+        )}
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to={defaultLoginPath} replace />} />
       </Routes>
 
       <ToastContainer
