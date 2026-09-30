@@ -96,13 +96,13 @@
 /* Welcome Section */
 .welcome-section {
     background: linear-gradient(135deg, #0B2545 0%, #0099D8 65%, #7CB342 100%);
-    border-radius: 20px;
-    padding: 3rem;
+    border-radius: 14px;
+    padding: 1.35rem 1.75rem;
     color: white;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.25rem;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 153, 216, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 153, 216, 0.2);
 }
 
 .welcome-section::before {
@@ -117,50 +117,51 @@
 }
 
 .welcome-text h1 {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
     font-weight: 800;
 }
 
 .welcome-text p {
-    font-size: 1.1rem;
+    font-size: 0.88rem;
     opacity: 0.9;
 }
 
 /* Stats Grid */
 .dashboard-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .d-stat-card {
     background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .d-stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
 }
 
 .d-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     color: white;
+    flex-shrink: 0;
 }
 
 .d-icon.blue {
@@ -179,49 +180,49 @@
 }
 
 .d-info h3 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 1.55rem;
+    font-weight: 800;
     color: #2d3748;
-    line-height: 1;
-    margin-bottom: 0.25rem;
+    line-height: 1.1;
+    margin-bottom: 0.15rem;
 }
 
 .d-info p {
     color: #718096;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
 }
 
 /* Quick Actions Grid */
 .actions-section h2 {
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     color: #2d3748;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
 }
 
 .action-card-btn {
     background: white;
     border: none;
-    border-radius: 16px;
-    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    padding: 1.1rem 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.65rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     position: relative;
     overflow: hidden;
 }
@@ -232,15 +233,15 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, #0099D8, #7CB342);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .action-card-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.07);
 }
 
 .action-card-btn:hover::before {
@@ -248,14 +249,14 @@
 }
 
 .action-icon {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     background: #f7fafc;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     color: #5a67d8;
     transition: all 0.3s ease;
 }
@@ -263,11 +264,11 @@
 .action-card-btn:hover .action-icon {
     background: #ebf4ff;
     color: #4c51bf;
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .action-text {
-    font-size: 1.1rem;
+    font-size: 0.88rem;
     font-weight: 600;
     color: #4a5568;
     text-align: center;

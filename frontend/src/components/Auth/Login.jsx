@@ -211,7 +211,7 @@ const Login = ({ fixedRole }) => {
               <div className="kec-card-header">
                 {/* Official KEC Bubble cluster motif */}
                 <div className="kec-card-bubble-emblem">
-                  <svg width="60" height="60" viewBox="0 0 100 100" aria-label="KEC Emblem">
+                  <svg width="42" height="42" viewBox="0 0 100 100" aria-label="KEC Emblem">
                     <defs>
                       <linearGradient id="bubbleGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#0099D8" />
