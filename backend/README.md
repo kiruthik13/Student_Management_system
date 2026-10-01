@@ -199,9 +199,16 @@ JWT_EXPIRES_IN=7d
 BCRYPT_SALT_ROUNDS=12
 FRONTEND_URL=http://localhost:5173
 
-# Nodemailer / Gmail SMTP Configuration
+# Nodemailer / Gmail SMTP Configuration (Works for localhost)
 EMAIL_USER=your-institutional-email@gmail.com
 EMAIL_PASSWORD=your-google-app-password
+
+# Render.com Cloud Deployment Email Configuration (Bypasses Render SMTP port blocking)
+# Render Free tier blocks outbound SMTP ports 25, 465, & 587. 
+# Use Brevo (300 free emails/day) or Resend (100 free emails/day) via HTTPS REST API (Port 443):
+BREVO_API_KEY=xkeysib-your-brevo-api-key-here
+# Or Resend:
+# RESEND_API_KEY=re_your-resend-api-key-here
 ```
 
 ### 2. Install Dependencies

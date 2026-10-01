@@ -1296,19 +1296,21 @@ router.post('/send-csv-report', authenticateAdmin, requireActiveAdmin, async (re
     if (emailResult.success) {
       res.json({
         message: 'CSV report sent successfully via email',
-        messageId: emailResult.messageId
+        messageId: emailResult.messageId,
+        provider: emailResult.provider
       });
     } else {
       res.status(500).json({
-        message: 'Failed to send CSV report via email',
-        error: emailResult.error
+        message: emailResult.error || 'Failed to send CSV report via email',
+        error: emailResult.error,
+        code: emailResult.code
       });
     }
 
   } catch (error) {
     console.error('Send CSV report error:', error);
     res.status(500).json({
-      message: 'Failed to send CSV report via email',
+      message: error.message || 'Failed to send CSV report via email',
       error: error.message
     });
   }

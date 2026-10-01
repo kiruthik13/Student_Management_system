@@ -24,10 +24,10 @@ const createTransporter = (usePort587 = true) => {
       // Use TLS 1.2 or higher
       minVersion: 'TLSv1.2'
     },
-    // Connection timeout settings (in milliseconds) - increased for slow networks
-    connectionTimeout: 60000, // 60 seconds
-    greetingTimeout: 60000,
-    socketTimeout: 60000,
+    // Connection timeout settings (in milliseconds) - fail fast on blocked networks
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
     // Disable keepalive to avoid connection issues
     pool: false,
     // Require TLS
@@ -419,22 +419,181 @@ const emailTemplates = {
   }
 };
 
-// Send email function
+// Send email via Brevo (Sendinblue) HTTP API (Port 443 - Bypasses Render blocked SMTP ports)
+const sendViaBrevo = async (to, emailContent) => {
+  const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_USER || 'kiruthikbairavan13@gmail.com';
+  const senderName = process.env.EMAIL_SENDER_NAME || 'Kongu Engineering College';
+
+  console.log(`🌐 [Brevo API] Sending email to ${to} via HTTPS (Port 443)...`);
+
+  const payload = {
+    sender: {
+      name: senderName,
+      email: senderEmail
+    },
+    to: [
+      { email: to }
+    ],
+    subject: emailContent.subject,
+    htmlContent: emailContent.html
+  };
+
+  if (emailContent.attachments && emailContent.attachments.length > 0) {
+    payload.attachment = emailContent.attachments.map(att => ({
+      name: att.filename || 'attendance_report.csv',
+      content: Buffer.isBuffer(att.content)
+        ? att.content.toString('base64')
+        : Buffer.from(String(att.content), 'utf-8').toString('base64')
+    }));
+  }
+
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg = data.message || `Brevo API HTTP ${response.status}`;
+    console.error('❌ [Brevo API] Error sending email:', errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  console.log('✅ [Brevo API] Email sent successfully! MessageId:', data.messageId);
+  return {
+    success: true,
+    messageId: data.messageId,
+    provider: 'brevo'
+  };
+};
+
+// Send email via Resend HTTP API (Port 443)
+const sendViaResend = async (to, emailContent) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  const senderEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  const senderName = process.env.EMAIL_SENDER_NAME || 'Kongu Engineering College';
+
+  console.log(`🌐 [Resend API] Sending email to ${to} via HTTPS (Port 443)...`);
+
+  const payload = {
+    from: `${senderName} <${senderEmail}>`,
+    to: [to],
+    subject: emailContent.subject,
+    html: emailContent.html
+  };
+
+  if (emailContent.attachments && emailContent.attachments.length > 0) {
+    payload.attachments = emailContent.attachments.map(att => ({
+      filename: att.filename || 'attendance_report.csv',
+      content: Buffer.isBuffer(att.content)
+        ? att.content.toString('base64')
+        : Buffer.from(String(att.content), 'utf-8').toString('base64')
+    }));
+  }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const errorMsg = data.message || `Resend API HTTP ${response.status}`;
+    console.error('❌ [Resend API] Error sending email:', errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  console.log('✅ [Resend API] Email sent successfully! ID:', data.id);
+  return {
+    success: true,
+    messageId: data.id,
+    provider: 'resend'
+  };
+};
+
+// Send email via Nodemailer SMTP (Default for localhost development)
+const sendViaSmtp = async (mailOptions) => {
+  const isRender = !!(process.env.RENDER || process.env.IS_RENDER);
+  const timeoutMs = 12000; // 12-second timeout to fail fast
+  const ports = [587, 465];
+  let lastError = null;
+
+  for (const port of ports) {
+    try {
+      const usePort587 = port === 587;
+      console.log(`📧 Attempting to send email using SMTP port ${port}...`);
+      const transporter = createTransporter(usePort587);
+
+      const info = await Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`SMTP timeout after ${timeoutMs / 1000}s on port ${port}`)), timeoutMs)
+        )
+      ]);
+
+      console.log('✅ ===== Email Sent Successfully via SMTP =====');
+      console.log('✅ Port used:', port);
+      console.log('✅ Message ID:', info.messageId);
+
+      if (transporter.close) {
+        transporter.close();
+      }
+
+      return { success: true, messageId: info.messageId, response: info.response, port: port, provider: 'smtp' };
+    } catch (error) {
+      lastError = error;
+      console.log(`⚠️ Failed with port ${port}, error:`, error.message);
+
+      // Render blocks all outbound SMTP ports (25, 465, 587)
+      if (isRender) {
+        break;
+      }
+
+      if (error.code === 'ESOCKET' || error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED' || error.message.includes('timeout')) {
+        if (port === 587) {
+          console.log('🔄 Retrying with port 465 (SSL)...');
+          continue;
+        }
+      }
+      break;
+    }
+  }
+
+  if (isRender || lastError?.message?.includes('timeout') || lastError?.code === 'ETIMEDOUT') {
+    const helpfulMsg = 'Render free tier blocks SMTP ports 25, 465, & 587. Please add BREVO_API_KEY to Render Environment Variables (free 300 emails/day at brevo.com) to send emails via HTTPS.';
+    console.error('❌ ' + helpfulMsg);
+    throw new Error(helpfulMsg);
+  }
+
+  throw lastError || new Error('All email ports failed');
+};
+
+// Main send email function
 const sendEmail = async (to, template, data = []) => {
   try {
     console.log('📧 ===== Email Sending Process Started =====');
     console.log('📧 To:', to);
     console.log('📧 Template:', template);
-    console.log('📧 Data:', data);
 
     // Check if template exists
     if (!emailTemplates[template]) {
       console.error('❌ Email template not found:', template);
-      console.error('❌ Available templates:', Object.keys(emailTemplates));
       return { success: false, error: `Template '${template}' not found` };
     }
 
-    // Generate email content first
+    // Generate email content from template
     console.log('📧 Generating email content from template...');
     const emailContent = emailTemplates[template](...data);
 
@@ -445,89 +604,42 @@ const sendEmail = async (to, template, data = []) => {
 
     console.log('✅ Email content generated successfully');
     console.log('📧 Subject:', emailContent.subject);
-    console.log('📧 HTML length:', emailContent.html ? emailContent.html.length : 0);
     console.log('📧 Has attachments:', !!emailContent.attachments);
 
-    // Prepare mail options
+    // Method 1: Check for Brevo REST API Key (Recommended for Render)
+    if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
+      return await sendViaBrevo(to, emailContent);
+    }
+
+    // Method 2: Check for Resend REST API Key
+    if (process.env.RESEND_API_KEY) {
+      return await sendViaResend(to, emailContent);
+    }
+
+    // Method 3: Fallback to Nodemailer SMTP (Works on localhost)
+    console.log('📧 No REST API key configured. Using Nodemailer SMTP (Note: Render blocks outbound SMTP ports)...');
+    const senderEmail = process.env.EMAIL_USER || 'kiruthikbairavan13@gmail.com';
     const mailOptions = {
-      from: `"Kongu Engineering College" <kiruthikbairavan13@gmail.com>`,
+      from: `"Kongu Engineering College" <${senderEmail}>`,
       to: to,
       subject: emailContent.subject,
       html: emailContent.html
     };
 
-    // Add attachments if present
     if (emailContent.attachments) {
       mailOptions.attachments = emailContent.attachments;
       console.log('📧 Attachments added:', emailContent.attachments.length);
     }
 
-    // Try sending with port 587 first (more reliable), then fallback to 465
-    let lastError = null;
-    const ports = [587, 465];
-
-    for (const port of ports) {
-      try {
-        const usePort587 = port === 587;
-        console.log(`📧 Attempting to send email using port ${port}...`);
-        const transporter = createTransporter(usePort587);
-
-        // Send email directly without verification (verification can timeout)
-        console.log('📧 Sending email via transporter...');
-        const info = await Promise.race([
-          transporter.sendMail(mailOptions),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Email send timeout after 60 seconds')), 60000)
-          )
-        ]);
-
-        console.log('✅ ===== Email Sent Successfully =====');
-        console.log('✅ Port used:', port);
-        console.log('✅ Message ID:', info.messageId);
-        console.log('✅ Response:', info.response);
-
-        // Close transporter
-        if (transporter.close) {
-          transporter.close();
-        }
-
-        return { success: true, messageId: info.messageId, response: info.response, port: port };
-      } catch (error) {
-        lastError = error;
-        console.log(`⚠️ Failed with port ${port}, error:`, error.message);
-        console.log(`⚠️ Error code:`, error.code);
-
-        // If it's a timeout or connection error, try the other port
-        if (error.code === 'ESOCKET' || error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED' || error.message.includes('timeout')) {
-          if (port === 587) {
-            console.log('🔄 Retrying with port 465 (SSL)...');
-            continue; // Try next port
-          } else {
-            console.log('❌ Both ports failed, giving up');
-            break;
-          }
-        } else {
-          // For authentication or other errors, don't retry
-          console.log('❌ Non-connection error, not retrying');
-          throw error;
-        }
-      }
-    }
-
-    // If we get here, both ports failed
-    throw lastError || new Error('All email ports failed');
+    return await sendViaSmtp(mailOptions);
   } catch (error) {
     console.error('❌ ===== Email Sending Failed =====');
     console.error('❌ Error message:', error.message);
-    console.error('❌ Error code:', error.code);
-    console.error('❌ Error command:', error.command);
-    console.error('❌ Full error:', error);
 
     return {
       success: false,
       error: error.message,
-      code: error.code,
-      command: error.command
+      code: error.code
     };
   }
 };
