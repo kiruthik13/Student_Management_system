@@ -173,7 +173,7 @@ a:hover {
 }
 
 /* Buttons */
-button:not(.Toastify__close-button) {
+button:not(.Toastify__close-button):not([class*="ksd-"]) {
   border-radius: var(--radius-md);
   border: none;
   padding: var(--space-3) var(--space-6);
@@ -190,7 +190,7 @@ button:not(.Toastify__close-button) {
   overflow: hidden;
 }
 
-button:not(.Toastify__close-button):before {
+button:not(.Toastify__close-button):not([class*="ksd-"]):before {
   content: '';
   position: absolute;
   top: 0;
@@ -201,11 +201,11 @@ button:not(.Toastify__close-button):before {
   transition: left 0.5s;
 }
 
-button:not(.Toastify__close-button):hover:before {
+button:not(.Toastify__close-button):not([class*="ksd-"]):hover:before {
   left: 100%;
 }
 
-button:not(.Toastify__close-button):focus {
+button:not(.Toastify__close-button):not([class*="ksd-"]):focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }

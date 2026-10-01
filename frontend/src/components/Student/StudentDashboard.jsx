@@ -193,76 +193,69 @@ const StudentDashboard = () => {
     const [greeting,     setGreeting]     = useState('Good Morning');
     const [greetEmoji,   setGreetEmoji]   = useState('☀️');
     const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState([
-        {
-            id: 'kec-notif-1',
-            type: 'warning',
-            title: 'Attendance Alert',
-            message: 'Your overall attendance is monitored. Ensure it stays above 75% for exam eligibility.',
-            time: 'Just now',
-            unread: true
-        },
-        {
-            id: 'kec-notif-2',
-            type: 'info',
-            title: 'Academic Report Ready',
-            message: 'Your current semester academic and marks summary is ready for download.',
-            time: '2 hours ago',
-            unread: true
-        },
-        {
-            id: 'kec-notif-3',
-            type: 'success',
-            title: 'Continuous Assessment Updated',
-            message: 'Internal marks for Continuous Assessment Tests have been synchronized.',
-            time: '1 day ago',
-            unread: true
-        }
-    ]);
+    const [notifications, setNotifications] = useState([]);
     const notifRef = useRef(null);
 
     // Auto-update dynamic notifications based on real student data
     useEffect(() => {
-        if (!stats) return;
-        const attNum = parseFloat(stats.attendancePercentage || 0);
+        const attNum = parseFloat(stats?.attendancePercentage || 0);
         const dynamicList = [];
 
-        if (attNum > 0 && attNum < 75) {
+        if (stats && attNum > 0 && attNum < 75) {
             dynamicList.push({
                 id: 'kec-notif-att-critical',
                 type: 'danger',
-                title: 'Low Attendance Alert',
-                message: `Your attendance is ${attNum.toFixed(1)}%, which is below the mandatory 75% threshold.`,
-                time: 'Attention needed',
-                unread: true
+                title: 'Low Attendance Warning',
+                message: `Your current attendance is ${attNum.toFixed(1)}%, which is below the mandatory 75% requirement.`,
+                time: 'Requires Attention',
+                unread: true,
+                path: '/student/attendance',
+                actionLabel: 'Check Attendance'
             });
-        } else if (attNum >= 75) {
+        } else if (stats && attNum >= 75) {
             dynamicList.push({
                 id: 'kec-notif-att-good',
                 type: 'success',
                 title: 'Attendance on Track',
                 message: `Great job! Your attendance is at ${attNum.toFixed(1)}% (above the 75% required target).`,
-                time: 'Current status',
-                unread: false
+                time: 'Verified',
+                unread: false,
+                path: '/student/attendance',
+                actionLabel: 'View Details'
+            });
+        } else {
+            dynamicList.push({
+                id: 'kec-notif-att-notice',
+                type: 'warning',
+                title: 'Attendance Monitored',
+                message: 'Daily attendance records are active. Regularly monitor your percentage for semester eligibility.',
+                time: 'Notice',
+                unread: true,
+                path: '/student/attendance',
+                actionLabel: 'View Attendance'
             });
         }
 
         dynamicList.push({
             id: 'kec-notif-rep',
             type: 'info',
-            title: 'Semester Report Generation',
-            message: 'You can generate and download your official KEC academic report anytime.',
+            title: 'Official Academic Report',
+            message: 'Your official Kongu Engineering College semester summary & progress report is ready.',
             time: 'Available now',
-            unread: true
+            unread: true,
+            isPdf: true,
+            actionLabel: 'Download PDF'
         });
 
         dynamicList.push({
             id: 'kec-notif-sem',
             type: 'success',
-            title: 'Academic Portal Active',
-            message: 'Student portal records and Continuous Assessment marks are synchronized.',
+            title: 'Marks & Continuous Assessments',
+            message: 'Continuous Assessment Tests (CAT) and internal marks are up to date.',
             time: 'Today',
-            unread: true
+            unread: true,
+            path: '/student/marks',
+            actionLabel: 'View Marks'
         });
 
         setNotifications(dynamicList);
@@ -294,6 +287,16 @@ const StudentDashboard = () => {
 
     const clearAllNotifications = () => {
         setNotifications([]);
+    };
+
+    const handleNotifClick = (item) => {
+        markNotificationAsRead(item.id);
+        setShowNotifications(false);
+        if (item.isPdf) {
+            handlePDF();
+        } else if (item.path) {
+            navigate(item.path);
+        }
     };
 
     const unreadCount = notifications.filter(n => n.unread).length;
@@ -494,12 +497,15 @@ const StudentDashboard = () => {
                     {/* Notification Dropdown Container */}
                     <div className="ksd-notif-wrapper" ref={notifRef}>
                         <button
+                            type="button"
                             className={`ksd-bell-btn ${showNotifications ? 'active' : ''} ${unreadCount > 0 ? 'has-unread' : ''}`}
                             aria-label="Notifications"
                             onClick={() => setShowNotifications(prev => !prev)}
-                            title="View Notifications"
+                            title="Notifications"
                         >
-                            <FaBell className="ksd-bell-icon"/>
+                            <span className="ksd-bell-icon-box">
+                                <FaBell className="ksd-bell-icon"/>
+                            </span>
                             {unreadCount > 0 && (
                                 <span className="ksd-bell-badge">
                                     <span className="ksd-bell-ping"></span>
@@ -513,15 +519,25 @@ const StudentDashboard = () => {
                             <div className="ksd-notif-dropdown">
                                 <div className="ksd-notif-header">
                                     <div className="ksd-notif-head-title">
-                                        <h4>Notifications</h4>
+                                        <div className="ksd-notif-head-icon">
+                                            <FaBell />
+                                        </div>
+                                        <div>
+                                            <h4>Notifications</h4>
+                                            <p className="ksd-notif-subtext">KEC Student Portal</p>
+                                        </div>
                                         {unreadCount > 0 ? (
-                                            <span className="ksd-notif-count-tag">{unreadCount} new</span>
+                                            <span className="ksd-notif-count-tag">{unreadCount} New</span>
                                         ) : (
                                             <span className="ksd-notif-count-tag read">All caught up</span>
                                         )}
                                     </div>
                                     {unreadCount > 0 && (
-                                        <button className="ksd-notif-markall-btn" onClick={markAllNotificationsAsRead}>
+                                        <button 
+                                            type="button" 
+                                            className="ksd-notif-markall-btn" 
+                                            onClick={markAllNotificationsAsRead}
+                                        >
                                             Mark all read
                                         </button>
                                     )}
@@ -530,7 +546,9 @@ const StudentDashboard = () => {
                                 <div className="ksd-notif-body">
                                     {notifications.length === 0 ? (
                                         <div className="ksd-notif-empty">
-                                            <FaBell className="ksd-notif-empty-icon"/>
+                                            <div className="ksd-notif-empty-icon-wrap">
+                                                <FaBell className="ksd-notif-empty-icon"/>
+                                            </div>
                                             <p>No notifications right now</p>
                                             <span>You are all caught up with your academic updates!</span>
                                         </div>
@@ -540,13 +558,13 @@ const StudentDashboard = () => {
                                                 <div
                                                     key={item.id}
                                                     className={`ksd-notif-item ${item.unread ? 'unread' : 'read'} type-${item.type}`}
-                                                    onClick={() => markNotificationAsRead(item.id)}
+                                                    onClick={() => handleNotifClick(item)}
                                                 >
                                                     <div className={`ksd-notif-item-icon ${item.type}`}>
                                                         {item.type === 'danger' && <FaExclamationCircle/>}
                                                         {item.type === 'warning' && <FaBolt/>}
                                                         {item.type === 'success' && <FaCheckCircle/>}
-                                                        {item.type === 'info' && <FaInfoCircle/>}
+                                                        {item.type === 'info' && <FaFilePdf/>}
                                                     </div>
                                                     <div className="ksd-notif-item-content">
                                                         <div className="ksd-notif-item-header">
@@ -554,11 +572,20 @@ const StudentDashboard = () => {
                                                             <span className="ksd-notif-time">{item.time}</span>
                                                         </div>
                                                         <p>{item.message}</p>
+                                                        {item.actionLabel && (
+                                                            <div className="ksd-notif-action-row">
+                                                                <span className="ksd-notif-action-btn">
+                                                                    {item.actionLabel} <FaArrowRight className="ksd-notif-action-arr"/>
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <button
+                                                        type="button"
                                                         className="ksd-notif-item-del"
                                                         title="Dismiss notification"
                                                         onClick={(e) => removeNotification(item.id, e)}
+                                                        aria-label="Dismiss"
                                                     >
                                                         <FaTimes/>
                                                     </button>
@@ -570,7 +597,12 @@ const StudentDashboard = () => {
 
                                 {notifications.length > 0 && (
                                     <div className="ksd-notif-footer">
-                                        <button className="ksd-notif-clear-btn" onClick={clearAllNotifications}>
+                                        <span className="ksd-notif-footer-hint">Click an alert to view details</span>
+                                        <button 
+                                            type="button" 
+                                            className="ksd-notif-clear-btn" 
+                                            onClick={clearAllNotifications}
+                                        >
                                             Clear All
                                         </button>
                                     </div>

@@ -63,100 +63,171 @@
     gap: 0.85rem;
 }
 
-/* Notification Wrapper & Premium Bell */
+/* ─────────────────────────────────────────────────────────
+   PREMIUM NOTIFICATION SYSTEM (BELL & DROPDOWN)
+───────────────────────────────────────────────────────── */
 .ksd-notif-wrapper {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Bell Button - Crystal Clear, High Contrast, Perfectly Proportioned */
 .ksd-bell-btn {
-    position: relative;
-    width: 42px; height: 42px;
-    background: #FFFFFF;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: #475569;
-    font-size: 1.05rem;
-    box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
-    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: visible !important;
+    outline: none !important;
 }
 
-.ksd-bell-btn:hover,
-.ksd-bell-btn.active {
-    background: #F0F9FF;
-    border-color: #0099D8;
-    color: #0099D8;
-    box-shadow: 0 4px 14px rgba(0, 153, 216, 0.18);
+.ksd-bell-btn:before,
+.ksd-bell-btn:after {
+    display: none !important;
+}
+
+.ksd-bell-btn:hover {
+    background: #F0F9FF !important;
+    border-color: #0099D8 !important;
+    box-shadow: 0 4px 14px rgba(0, 153, 216, 0.18) !important;
     transform: translateY(-1px);
 }
 
+.ksd-bell-btn.active {
+    background: #E0F2FE !important;
+    border-color: #0099D8 !important;
+    box-shadow: 0 0 0 3px rgba(0, 153, 216, 0.22) !important;
+}
+
+/* Icon Box & SVG Icon - Fully Visible, Sharp Deep Navy */
+.ksd-bell-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.ksd-bell-icon {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 20px !important;
+    color: #0B2545 !important;
+    fill: #0B2545 !important;
+    display: block !important;
+    transition: color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0 !important;
+}
+
+.ksd-bell-btn:hover .ksd-bell-icon,
+.ksd-bell-btn.active .ksd-bell-icon {
+    color: #0099D8 !important;
+    fill: #0099D8 !important;
+}
+
 .ksd-bell-btn.has-unread .ksd-bell-icon {
-    animation: bellSwing 2s infinite ease-in-out;
+    color: #0B2545 !important;
+    fill: #0B2545 !important;
+    animation: ksdBellSwing 2.8s infinite ease-in-out;
     transform-origin: top center;
 }
 
-@keyframes bellSwing {
-    0%, 70%, 100% { transform: rotate(0deg); }
-    75% { transform: rotate(14deg); }
-    80% { transform: rotate(-12deg); }
-    85% { transform: rotate(8deg); }
+@keyframes ksdBellSwing {
+    0%, 75%, 100% { transform: rotate(0deg); }
+    78% { transform: rotate(14deg); }
+    82% { transform: rotate(-12deg); }
+    86% { transform: rotate(8deg); }
     90% { transform: rotate(-4deg); }
 }
 
+/* Notification Badge - Crisp Red Pill with Pure White Ring */
 .ksd-bell-badge {
-    position: absolute;
-    top: -4px; right: -4px;
-    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-    color: #FFFFFF;
-    font-size: 0.65rem;
-    font-weight: 800;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 9px;
-    padding: 0 4px;
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
-    z-index: 2;
+    position: absolute !important;
+    top: -5px !important;
+    right: -5px !important;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%) !important;
+    color: #FFFFFF !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    min-width: 19px !important;
+    height: 19px !important;
+    border-radius: 10px !important;
+    padding: 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid #FFFFFF !important;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4) !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+    line-height: 1 !important;
 }
 
 .ksd-bell-ping {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: 9px;
-    background: #EF4444;
-    opacity: 0.75;
-    animation: badgePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-    z-index: -1;
+    position: absolute !important;
+    top: -2px !important; left: -2px !important; right: -2px !important; bottom: -2px !important;
+    border-radius: 12px !important;
+    background: #EF4444 !important;
+    opacity: 0.75 !important;
+    animation: ksdBadgePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+    z-index: -1 !important;
 }
 
-@keyframes badgePulse {
-    0% { transform: scale(1); opacity: 0.8; }
+@keyframes ksdBadgePulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
     70%, 100% { transform: scale(2.2); opacity: 0; }
 }
 
-/* Premium Notification Dropdown */
+/* Premium Notification Dropdown Drawer */
 .ksd-notif-dropdown {
     position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    width: 380px;
-    max-width: 90vw;
+    top: calc(100% + 14px);
+    right: -4px;
+    width: 390px;
+    max-width: calc(100vw - 32px);
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px -10px rgba(11, 37, 69, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    border-radius: 18px;
+    box-shadow: 0 22px 50px -10px rgba(11, 37, 69, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.04);
     z-index: 1000;
-    overflow: hidden;
-    animation: notifSlideDown 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: visible;
+    animation: ksdNotifSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes notifSlideDown {
+.ksd-notif-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    right: 18px;
+    width: 14px;
+    height: 14px;
+    background: #F8FAFC;
+    transform: rotate(45deg);
+    border-left: 1px solid #E2E8F0;
+    border-top: 1px solid #E2E8F0;
+    z-index: 1;
+}
+
+@keyframes ksdNotifSlide {
     from {
         opacity: 0;
-        transform: translateY(-8px) scale(0.98);
+        transform: translateY(-10px) scale(0.97);
     }
     to {
         opacity: 1;
@@ -164,89 +235,130 @@
     }
 }
 
+/* Header */
 .ksd-notif-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.1rem;
+    padding: 1rem 1.15rem;
     background: #F8FAFC;
     border-bottom: 1px solid #EDF2F7;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
 }
 
 .ksd-notif-head-title {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.65rem;
+}
+
+.ksd-notif-head-icon {
+    width: 34px;
+    height: 34px;
+    background: #E0F2FE;
+    color: #0284C7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
 }
 
 .ksd-notif-head-title h4 {
     margin: 0;
     font-size: 0.98rem;
-    font-weight: 700;
-    color: #0F172A;
+    font-weight: 800;
+    color: #0B2545;
+    line-height: 1.2;
+}
+
+.ksd-notif-subtext {
+    margin: 0;
+    font-size: 0.72rem;
+    color: #64748B;
+    font-weight: 500;
 }
 
 .ksd-notif-count-tag {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.18rem 0.55rem;
     border-radius: 20px;
     background: #E0F2FE;
     color: #0284C7;
+    border: 1px solid #BAE6FD;
 }
 
 .ksd-notif-count-tag.read {
     background: #F1F5F9;
     color: #64748B;
+    border-color: #E2E8F0;
 }
 
 .ksd-notif-markall-btn {
-    background: none;
-    border: none;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #0099D8;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: background 0.15s;
+    background: transparent !important;
+    border: none !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    color: #0099D8 !important;
+    cursor: pointer !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 8px !important;
+    transition: background 0.15s ease !important;
 }
 
 .ksd-notif-markall-btn:hover {
-    background: #E0F2FE;
+    background: #E0F2FE !important;
+    color: #0077A8 !important;
 }
 
+/* Body */
 .ksd-notif-body {
-    max-height: 380px;
+    max-height: 390px;
     overflow-y: auto;
+    background: #FFFFFF;
 }
 
 .ksd-notif-empty {
-    padding: 2.5rem 1.5rem;
+    padding: 3rem 1.5rem;
     text-align: center;
     color: #64748B;
 }
 
+.ksd-notif-empty-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #F1F5F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.9rem auto;
+}
+
 .ksd-notif-empty-icon {
-    font-size: 2.2rem;
-    color: #CBD5E1;
-    margin-bottom: 0.75rem;
+    font-size: 1.8rem;
+    color: #94A3B8;
 }
 
 .ksd-notif-empty p {
     margin: 0;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #334155;
+    font-weight: 700;
+    font-size: 0.96rem;
+    color: #1E293B;
 }
 
 .ksd-notif-empty span {
     display: block;
     margin-top: 0.35rem;
     font-size: 0.8rem;
-    color: #94A3B8;
+    color: #64748B;
 }
 
+/* List Items */
 .ksd-notif-list {
     display: flex;
     flex-direction: column;
@@ -257,10 +369,15 @@
     display: flex;
     align-items: flex-start;
     gap: 0.85rem;
-    padding: 0.95rem 1.1rem;
+    padding: 1rem 1.15rem;
     border-bottom: 1px solid #F1F5F9;
     cursor: pointer;
-    transition: background 0.16s ease;
+    background: #FFFFFF;
+    transition: all 0.16s ease;
+}
+
+.ksd-notif-item:last-child {
+    border-bottom: none;
 }
 
 .ksd-notif-item:hover {
@@ -268,11 +385,11 @@
 }
 
 .ksd-notif-item.unread {
-    background: #F0F9FF;
+    background: #F8FCFF;
 }
 
 .ksd-notif-item.unread:hover {
-    background: #E6F4FE;
+    background: #F0F7FE;
 }
 
 .ksd-notif-item::before {
@@ -303,14 +420,15 @@
 }
 
 .ksd-notif-item-icon {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.92rem;
+    font-size: 1rem;
+    flex-shrink: 0;
 }
 
 .ksd-notif-item-icon.info {
@@ -343,73 +461,113 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
 }
 
 .ksd-notif-item-header strong {
-    font-size: 0.86rem;
-    color: #1E293B;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.88rem;
+    color: #0F172A;
+    font-weight: 700;
 }
 
 .ksd-notif-time {
     font-size: 0.7rem;
     color: #94A3B8;
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .ksd-notif-item-content p {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: 0.81rem;
     color: #475569;
-    line-height: 1.4;
-    word-break: break-word;
+    line-height: 1.45;
+}
+
+.ksd-notif-action-row {
+    margin-top: 0.45rem;
+    display: flex;
+}
+
+.ksd-notif-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #0099D8;
+    background: #E0F2FE;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ksd-notif-item:hover .ksd-notif-action-btn {
+    background: #0099D8;
+    color: #FFFFFF;
+}
+
+.ksd-notif-action-arr {
+    font-size: 0.65rem;
 }
 
 .ksd-notif-item-del {
-    background: none;
-    border: none;
-    color: #94A3B8;
-    padding: 0.25rem;
-    cursor: pointer;
-    font-size: 0.72rem;
-    border-radius: 4px;
-    opacity: 0.6;
-    transition: all 0.15s;
-    margin-top: 2px;
+    background: transparent !important;
+    border: none !important;
+    color: #94A3B8 !important;
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+    opacity: 0.5 !important;
+    transition: all 0.15s ease !important;
+    margin-top: -2px;
 }
 
 .ksd-notif-item-del:hover {
-    opacity: 1;
-    color: #EF4444;
-    background: #FEE2E2;
+    opacity: 1 !important;
+    color: #EF4444 !important;
+    background: #FEE2E2 !important;
 }
 
+/* Footer */
 .ksd-notif-footer {
     display: flex;
-    justify-content: flex-end;
-    padding: 0.7rem 1.1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.15rem;
     background: #F8FAFC;
     border-top: 1px solid #EDF2F7;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+.ksd-notif-footer-hint {
+    font-size: 0.7rem;
+    color: #94A3B8;
+    font-weight: 500;
 }
 
 .ksd-notif-clear-btn {
-    background: none;
-    border: none;
-    color: #64748B;
-    font-size: 0.76rem;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    transition: color 0.15s;
+    background: transparent !important;
+    border: none !important;
+    color: #64748B !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    padding: 0.25rem 0.6rem !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease !important;
 }
 
 .ksd-notif-clear-btn:hover {
-    color: #EF4444;
+    color: #EF4444 !important;
+    background: #FEE2E2 !important;
 }
 
 /* User pill */
