@@ -342,17 +342,34 @@ input {
   background: linear-gradient(90deg, #0099D8 0%, #38bdf8 100%) !important;
 }
 
-/* Close button styling */
+/* Close button styling - highly clickable & responsive */
 .Toastify__close-button {
   color: #94A3B8 !important;
   opacity: 0.8 !important;
   transition: all 0.2s ease !important;
   font-size: 16px !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 10 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  margin: -4px -4px 0 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.Toastify__close-button > svg {
+  pointer-events: none !important;
 }
 
 .Toastify__close-button:hover {
   opacity: 1 !important;
   color: #0F172A !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 6px !important;
 }
 
 /* Toast body styling */
@@ -362,23 +379,17 @@ input {
   font-size: 14.5px !important;
   font-weight: 500 !important;
   color: #1e293b !important;
+  pointer-events: auto !important;
 }
 
-/* Animation enhancements */
-@keyframes toastSlideIn {
-  from {
-    transform: translate3d(110%, 0, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
+/* Ensure toast container and items have full pointer events */
+.Toastify__toast-container {
+  pointer-events: none !important;
 }
 
 .Toastify__toast {
-  animation: toastSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
 
 /* Modal styles */

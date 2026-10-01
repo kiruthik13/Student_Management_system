@@ -173,7 +173,7 @@ a:hover {
 }
 
 /* Buttons */
-button {
+button:not(.Toastify__close-button) {
   border-radius: var(--radius-md);
   border: none;
   padding: var(--space-3) var(--space-6);
@@ -190,7 +190,7 @@ button {
   overflow: hidden;
 }
 
-button:before {
+button:not(.Toastify__close-button):before {
   content: '';
   position: absolute;
   top: 0;
@@ -201,11 +201,11 @@ button:before {
   transition: left 0.5s;
 }
 
-button:hover:before {
+button:not(.Toastify__close-button):hover:before {
   left: 100%;
 }
 
-button:focus {
+button:not(.Toastify__close-button):focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
