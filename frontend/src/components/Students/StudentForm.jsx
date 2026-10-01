@@ -230,6 +230,8 @@ const StudentForm = ({ student, onSave, onCancel }) => {
               <option value="Semester 6">Semester 6</option>
               <option value="Semester 7">Semester 7</option>
               <option value="Semester 8">Semester 8</option>
+              <option value="Semester 9">Semester 9</option>
+              <option value="Semester 10">Semester 10</option>
             </select>
           </div>
           <div className="form-group half">

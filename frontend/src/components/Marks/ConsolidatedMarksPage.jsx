@@ -220,8 +220,11 @@ const ConsolidatedMarksPage = () => {
                                     <th>Roll No</th>
                                     <th>Name</th>
                                     {subjects.map(subj => (
-                                        <th key={subj._id} style={{ textAlign: 'center' }} title={subj.name}>
-                                            {subj.code} <br /> <small style={{ color: 'var(--gray-500)', fontWeight: 400 }}>({subj.maxMarks})</small>
+                                        <th key={subj._id} style={{ textAlign: 'center' }} title={`${subj.name} (${subj.semester || 'Semester 1'})`}>
+                                            {subj.code} <br />
+                                            <small style={{ color: 'var(--gray-500)', fontWeight: 400 }}>
+                                                {subj.semester ? `${subj.semester} • ` : ''}({subj.maxMarks})
+                                            </small>
                                         </th>
                                     ))}
                                     <th style={{ textAlign: 'center', color: 'var(--primary-color)' }}>Total</th>

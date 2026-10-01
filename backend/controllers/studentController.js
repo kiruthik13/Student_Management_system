@@ -225,7 +225,7 @@ exports.getMarks = async (req, res) => {
         if (!student) return res.status(404).json({ message: 'Student profile not found' });
 
         const marks = await Mark.find({ studentId: student._id })
-            .populate('subjectId', 'name code maxMarks')
+            .populate('subjectId', 'name code maxMarks semester')
             .sort({ createdAt: -1 });
 
         const formattedMarks = marks
@@ -233,6 +233,7 @@ exports.getMarks = async (req, res) => {
             .map(m => ({
                 subjectName: m.subjectId.name,
                 subjectCode: m.subjectId.code,
+                semester: m.subjectId.semester || 'Semester 1',
                 examType: m.examType,
                 marksObtained: m.marksObtained,
                 maxMarks: m.subjectId.maxMarks,

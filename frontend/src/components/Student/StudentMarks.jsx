@@ -16,6 +16,7 @@ const StudentMarks = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterExam, setFilterExam] = useState('ALL');
+    const [filterSemester, setFilterSemester] = useState('ALL');
 
     useEffect(() => {
         fetchMarks();
@@ -51,16 +52,18 @@ const StudentMarks = () => {
         ? [...marks].sort((a, b) => (b.marksObtained || 0) - (a.marksObtained || 0))[0]
         : null;
 
-    // Filter marks based on search and exam type
+    // Filter marks based on search, exam type, and semester
     const filteredMarks = marks.filter(item => {
         const matchesSearch = 
             (item.subjectName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
             (item.subjectCode || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesExam = filterExam === 'ALL' || item.examType === filterExam;
-        return matchesSearch && matchesExam;
+        const matchesSemester = filterSemester === 'ALL' || (item.semester || 'Semester 1') === filterSemester;
+        return matchesSearch && matchesExam && matchesSemester;
     });
 
     const examTypes = Array.from(new Set(marks.map(m => m.examType).filter(Boolean)));
+    const semestersList = Array.from(new Set(marks.map(m => m.semester).filter(Boolean))).sort();
 
     const getGradeInfo = (pct) => {
         const p = parseFloat(pct) || 0;
@@ -176,6 +179,18 @@ const StudentMarks = () => {
                     <div className="ksm-filter-wrapper">
                         <FaFilter className="ksm-filter-ico" />
                         <select
+                            value={filterSemester}
+                            onChange={(e) => setFilterSemester(e.target.value)}
+                            className="ksm-select"
+                            style={{ marginRight: '8px' }}
+                        >
+                            <option value="ALL">All Semesters</option>
+                            {Array.from({ length: 10 }, (_, i) => `Semester ${i + 1}`).map(s => (
+                                <option key={s} value={s}>{s}</option>
+                            ))}
+                        </select>
+
+                        <select
                             value={filterExam}
                             onChange={(e) => setFilterExam(e.target.value)}
                             className="ksm-select"
@@ -199,15 +214,15 @@ const StudentMarks = () => {
                             <FaBook className="ksm-empty-icon" />
                             <h3>No Marks Found</h3>
                             <p>
-                                {searchTerm || filterExam !== 'ALL'
+                                {searchTerm || filterExam !== 'ALL' || filterSemester !== 'ALL'
                                     ? 'No results match your active filters. Try clearing filters.'
                                     : 'No assessment marks have been entered for this semester yet.'}
                             </p>
-                            {(searchTerm || filterExam !== 'ALL') && (
+                            {(searchTerm || filterExam !== 'ALL' || filterSemester !== 'ALL') && (
                                 <button
                                     type="button"
                                     className="ksm-reset-btn"
-                                    onClick={() => { setSearchTerm(''); setFilterExam('ALL'); }}
+                                    onClick={() => { setSearchTerm(''); setFilterExam('ALL'); setFilterSemester('ALL'); }}
                                 >
                                     Reset Filters
                                 </button>
@@ -218,12 +233,13 @@ const StudentMarks = () => {
                             <table className="ksm-table">
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '60px' }}>#</th>
+                                        <th style={{ width: '55px' }}>#</th>
                                         <th>Subject Details</th>
+                                        <th style={{ width: '130px' }}>Semester</th>
                                         <th>Assessment Type</th>
                                         <th style={{ width: '190px' }}>Marks Scored</th>
-                                        <th style={{ width: '140px' }}>Percentage</th>
-                                        <th style={{ width: '130px' }}>Grade</th>
+                                        <th style={{ width: '130px' }}>Percentage</th>
+                                        <th style={{ width: '120px' }}>Grade</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -238,6 +254,20 @@ const StudentMarks = () => {
                                                         <span className="ksm-subject-name">{mark.subjectName}</span>
                                                         <span className="ksm-subject-code">{mark.subjectCode}</span>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <span style={{
+                                                        display: 'inline-block',
+                                                        background: '#E0F2FE',
+                                                        color: '#0369A1',
+                                                        fontSize: '0.78rem',
+                                                        fontWeight: '700',
+                                                        padding: '3px 8px',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid #BAE6FD'
+                                                    }}>
+                                                        {mark.semester || 'Semester 4'}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <span className="ksm-exam-badge">

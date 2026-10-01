@@ -4,11 +4,15 @@ const Subject = require('../models/Subject');
 const { check, validationResult } = require('express-validator');
 
 // @route   GET /api/subjects
-// @desc    Get all subjects
+// @desc    Get all subjects (optionally filtered by semester)
 // @access  Public (or Protected based on middleware)
 router.get('/', async (req, res) => {
     try {
-        const subjects = await Subject.find().sort({ name: 1 });
+        const query = {};
+        if (req.query.semester) {
+            query.semester = req.query.semester;
+        }
+        const subjects = await Subject.find(query).sort({ semester: 1, name: 1 });
         res.json(subjects);
     } catch (err) {
         console.error(err.message);
@@ -32,7 +36,7 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, code, maxMarks } = req.body;
+        const { name, code, maxMarks, semester } = req.body;
 
         try {
             let subject = await Subject.findOne({ code });
@@ -44,7 +48,8 @@ router.post(
             subject = new Subject({
                 name,
                 code,
-                maxMarks: maxMarks || 100
+                maxMarks: maxMarks || 100,
+                semester: semester || 'Semester 1'
             });
 
             await subject.save();
@@ -60,13 +65,14 @@ router.post(
 // @desc    Update a subject
 // @access  Private (Admin)
 router.put('/:id', async (req, res) => {
-    const { name, code, maxMarks } = req.body;
+    const { name, code, maxMarks, semester } = req.body;
 
     // Build subject object
     const subjectFields = {};
     if (name) subjectFields.name = name;
     if (code) subjectFields.code = code;
     if (maxMarks) subjectFields.maxMarks = maxMarks;
+    if (semester) subjectFields.semester = semester;
     subjectFields.updatedAt = Date.now();
 
     try {

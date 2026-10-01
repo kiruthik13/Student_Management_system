@@ -16,8 +16,10 @@ const SubjectManagementPage = () => {
     const [formData, setFormData] = useState({
         name: '',
         code: '',
-        maxMarks: 100
+        maxMarks: 100,
+        semester: 'Semester 1'
     });
+    const [filterSemester, setFilterSemester] = useState('ALL');
 
     useEffect(() => {
         fetchSubjects();
@@ -45,14 +47,16 @@ const SubjectManagementPage = () => {
             setFormData({
                 name: subject.name,
                 code: subject.code,
-                maxMarks: subject.maxMarks
+                maxMarks: subject.maxMarks,
+                semester: subject.semester || 'Semester 1'
             });
         } else {
             setCurrentSubject(null);
             setFormData({
                 name: '',
                 code: '',
-                maxMarks: 100
+                maxMarks: 100,
+                semester: 'Semester 1'
             });
         }
         setIsModalOpen(true);
@@ -112,28 +116,42 @@ const SubjectManagementPage = () => {
         }
     };
 
-    const filteredSubjects = subjects.filter(subject =>
-        subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        subject.code.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredSubjects = subjects.filter(subject => {
+        const matchesSearch = 
+            subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.code.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSemester = filterSemester === 'ALL' || (subject.semester || 'Semester 1') === filterSemester;
+        return matchesSearch && matchesSemester;
+    });
 
     return (
         <div className="main-content">
             <div className="content-header">
                 <h1 className="welcome-message">Subject Management</h1>
-                <p className="welcome-subtitle">Create, edit and manage subjects for the curriculum</p>
-                <div className="dashboard-info">
-                    <div style={{ position: 'relative', width: '300px' }}>
+                <p className="welcome-subtitle">Create, edit and manage subjects with semester classification</p>
+                <div className="dashboard-info" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div style={{ position: 'relative', width: '280px' }}>
                         <FaSearch style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--gray-400)' }} />
                         <input
                             className="form-input"
-                            style={{ paddingLeft: '2.5rem' }}
+                            style={{ paddingLeft: '2.5rem', width: '100%' }}
                             type="text"
                             placeholder="Search subjects..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
+                    <select
+                        value={filterSemester}
+                        onChange={(e) => setFilterSemester(e.target.value)}
+                        className="form-input"
+                        style={{ width: '190px', fontWeight: '600' }}
+                    >
+                        <option value="ALL">All Semesters</option>
+                        {Array.from({ length: 10 }, (_, i) => `Semester ${i + 1}`).map(s => (
+                            <option key={s} value={s}>{s}</option>
+                        ))}
+                    </select>
                     <button className="action-button" onClick={() => handleOpenModal()}>
                         <FaPlus /> Add Subject
                     </button>
@@ -146,7 +164,7 @@ const SubjectManagementPage = () => {
                         <div className="section-icon">
                             <FaList />
                         </div>
-                        Subjects List ({subjects.length})
+                        Subjects List ({filteredSubjects.length})
                     </h2>
                 </div>
 
@@ -161,6 +179,7 @@ const SubjectManagementPage = () => {
                                 <tr>
                                     <th>Subject Code</th>
                                     <th>Subject Name</th>
+                                    <th>Semester</th>
                                     <th>Max Marks</th>
                                     <th style={{ textAlign: 'center' }}>Actions</th>
                                 </tr>
@@ -171,6 +190,20 @@ const SubjectManagementPage = () => {
                                         <tr key={subject._id}>
                                             <td><strong>{subject.code}</strong></td>
                                             <td>{subject.name}</td>
+                                            <td>
+                                                <span style={{
+                                                    background: '#E0F2FE',
+                                                    color: '#0369A1',
+                                                    padding: '3px 9px',
+                                                    borderRadius: '6px',
+                                                    fontWeight: '700',
+                                                    fontSize: '0.8rem',
+                                                    border: '1px solid #BAE6FD',
+                                                    display: 'inline-block'
+                                                }}>
+                                                    {subject.semester || 'Semester 1'}
+                                                </span>
+                                            </td>
                                             <td>{subject.maxMarks}</td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <button
@@ -192,7 +225,7 @@ const SubjectManagementPage = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: 'var(--gray-500)' }}>
+                                        <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--gray-500)' }}>
                                             No subjects found.
                                         </td>
                                     </tr>
@@ -234,6 +267,21 @@ const SubjectManagementPage = () => {
                                     placeholder="e.g. Mathematics"
                                     required
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Semester *</label>
+                                <select
+                                    className="form-input"
+                                    name="semester"
+                                    value={formData.semester}
+                                    onChange={handleChange}
+                                    required
+                                    style={{ width: '100%', fontWeight: '500' }}
+                                >
+                                    {Array.from({ length: 10 }, (_, i) => `Semester ${i + 1}`).map(s => (
+                                        <option key={s} value={s}>{s}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Max Marks *</label>

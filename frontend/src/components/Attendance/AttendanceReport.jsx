@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { FaCalendar, FaUsers, FaDownload, FaFilter, FaChartBar } from 'react-icons/fa';
+import { FaCalendar, FaCalendarDay, FaCalendarWeek, FaUserGraduate, FaUsers, FaDownload, FaFilter, FaChartBar, FaSearch, FaEnvelope } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../../config/api';
 import { getStudentAttendance } from '../../utils/api';
 import './Attendance.css';
@@ -1049,65 +1049,71 @@ const AttendanceReport = () => {
       <div className="report-header">
         <h2>Attendance Report</h2>
       </div>
-      <div className="report-type-toggle" style={{ marginBottom: 20 }}>
-        <button onClick={() => setReportType('daily')} className={reportType === 'daily' ? 'active' : ''}>Daily</button>
-        <button onClick={() => setReportType('range')} className={reportType === 'range' ? 'active' : ''}>Date Range</button>
-        <button onClick={() => setReportType('student')} className={reportType === 'student' ? 'active' : ''}>Student</button>
+      <div className="report-type-toggle">
+        <button onClick={() => setReportType('daily')} className={reportType === 'daily' ? 'active' : ''}>
+          <FaCalendarDay style={{ marginRight: 6 }} /> Daily Report
+        </button>
+        <button onClick={() => setReportType('range')} className={reportType === 'range' ? 'active' : ''}>
+          <FaCalendarWeek style={{ marginRight: 6 }} /> Date Range Report
+        </button>
+        <button onClick={() => setReportType('student')} className={reportType === 'student' ? 'active' : ''}>
+          <FaUserGraduate style={{ marginRight: 6 }} /> Student Report
+        </button>
       </div>
 
-      {/* Filters for all report types */}
+      {/* Daily Report Filter Card */}
       {reportType === 'daily' && (
-        <div className="report-filters">
-          <div className="filter-group">
-            <label>Class</label>
-            <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
-              <option value="">Select Class</option>
-              {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
-            </select>
+        <div className="report-filter-card">
+          <div className="report-filters-grid">
+            <div className="filter-group">
+              <label>Class</label>
+              <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
+                <option value="">Select Class</option>
+                {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Section</label>
+              <select value={selectedSection} onChange={e => setSelectedSection(e.target.value)}>
+                <option value="">Select Section</option>
+                {sections.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Date</label>
+              <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
+            </div>
+            <div className="filter-group">
+              <label>Student Filter</label>
+              <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)}>
+                <option value="">All Students</option>
+                {students.map(s => <option key={s._id} value={s._id}>{s.fullName}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Recipient Email Address</label>
+              <input
+                type="email"
+                value={emailAddress}
+                onChange={e => setEmailAddress(e.target.value)}
+                placeholder="Enter email to dispatch report"
+              />
+            </div>
           </div>
-          <div className="filter-group">
-            <label>Section</label>
-            <select value={selectedSection} onChange={e => setSelectedSection(e.target.value)}>
-              <option value="">Select Section</option>
-              {sections.map(sec => <option key={sec} value={sec}>{sec}</option>)}
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Date</label>
-            <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
-          </div>
-          <div className="filter-group">
-            <label>Student</label>
-            <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)}>
-              <option value="">All</option>
-              {students.map(s => <option key={s._id} value={s._id}>{s.fullName}</option>)}
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={emailAddress}
-              onChange={e => setEmailAddress(e.target.value)}
-              placeholder="Enter email to send report"
-              style={{ width: '250px' }}
-            />
-          </div>
-          <div className="filter-group" style={{ alignSelf: 'end' }}>
+
+          <div className="report-actions-row">
             <button
-              className="export-btn"
+              className="action-btn btn-fetch"
               onClick={fetchAttendanceReport}
               disabled={loading || !selectedClass || !selectedSection || !selectedDate}
-              style={{ backgroundColor: '#007bff' }}
             >
-              {loading ? 'Loading...' : 'Fetch Report'}
+              <FaSearch /> {loading ? 'Loading...' : 'Fetch Report'}
             </button>
-            <button className="export-btn" onClick={exportToCSV} disabled={!reports.length} style={{ marginLeft: 8, backgroundColor: '#17a2b8' }}>
-              Export CSV
+            <button className="action-btn btn-csv" onClick={exportToCSV} disabled={!reports.length}>
+              <FaDownload /> Export CSV
             </button>
             <button
-              className="export-btn"
-              style={{ marginLeft: 8, backgroundColor: '#28a745' }}
+              className="action-btn btn-email"
               onClick={() => {
                 if (!reports || reports.length === 0) {
                   toast.error('No attendance data available to send. Please generate a report first.');
@@ -1173,187 +1179,169 @@ const AttendanceReport = () => {
               }}
               disabled={!reports.length || !emailAddress || sendingEmail}
             >
-              {sendingEmail ? 'Sending...' : 'Send Email'}
+              <FaEnvelope /> {sendingEmail ? 'Sending...' : 'Send Email'}
             </button>
           </div>
         </div>
       )}
+
+      {/* Date Range Report Filter Card */}
       {reportType === 'range' && (
-        <div className="report-filters">
-          <div className="filter-group">
-            <label>Class</label>
-            <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
-              <option value="">Select Class</option>
-              {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
-            </select>
+        <div className="report-filter-card">
+          <div className="report-filters-grid">
+            <div className="filter-group">
+              <label>Class</label>
+              <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
+                <option value="">Select Class</option>
+                {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Section</label>
+              <select value={selectedSection} onChange={e => setSelectedSection(e.target.value)}>
+                <option value="">Select Section</option>
+                {sections.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                style={{
+                  borderColor: dateRangeError ? '#dc3545' : undefined,
+                  borderWidth: dateRangeError ? '2px' : undefined
+                }}
+              />
+            </div>
+            <div className="filter-group">
+              <label>End Date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                style={{
+                  borderColor: dateRangeError ? '#dc3545' : undefined,
+                  borderWidth: dateRangeError ? '2px' : undefined
+                }}
+              />
+            </div>
+            <div className="filter-group">
+              <label>Recipient Email Address</label>
+              <input
+                type="email"
+                value={emailAddress}
+                onChange={e => setEmailAddress(e.target.value)}
+                placeholder="Enter email to dispatch report"
+              />
+            </div>
           </div>
-          <div className="filter-group">
-            <label>Section</label>
-            <select value={selectedSection} onChange={e => setSelectedSection(e.target.value)}>
-              <option value="">Select Section</option>
-              {sections.map(sec => <option key={sec} value={sec}>{sec}</option>)}
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Start Date</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
-              style={{
-                borderColor: dateRangeError ? '#dc3545' : '#ddd',
-                borderWidth: dateRangeError ? '2px' : '1px'
-              }}
-            />
-          </div>
-          <div className="filter-group">
-            <label>End Date</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
-              style={{
-                borderColor: dateRangeError ? '#dc3545' : '#ddd',
-                borderWidth: dateRangeError ? '2px' : '1px'
-              }}
-            />
-          </div>
+
           {dateRangeError && (
-            <div className="filter-group" style={{ gridColumn: '1 / -1', marginTop: '-10px' }}>
-              <div style={{
-                color: '#dc3545',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                backgroundColor: '#f8d7da',
-                padding: '5px 10px',
-                borderRadius: '4px',
-                border: '1px solid #f5c6cb',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <span>⚠️ {dateRangeError}</span>
-                {dateRangeError.includes('Start date cannot be after end date') && (
-                  <button
-                    onClick={fixDateRange}
-                    style={{
-                      backgroundColor: '#28a745',
-                      color: 'white',
-                      border: 'none',
-                      padding: '2px 8px',
-                      borderRadius: '3px',
-                      fontSize: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Fix Dates
-                  </button>
-                )}
-              </div>
+            <div className="date-range-error-banner">
+              <span>⚠️ {dateRangeError}</span>
+              {dateRangeError.includes('Start date cannot be after end date') && (
+                <button
+                  onClick={fixDateRange}
+                  className="fix-dates-btn"
+                >
+                  Fix Dates
+                </button>
+              )}
             </div>
           )}
-          <div className="filter-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={emailAddress}
-              onChange={e => setEmailAddress(e.target.value)}
-              placeholder="Enter email to send report"
-              style={{ width: '250px' }}
-            />
-          </div>
-          <div className="filter-group" style={{ alignSelf: 'end' }}>
+
+          <div className="report-actions-row">
             <button
-              className="export-btn"
+              className="action-btn btn-fetch"
               onClick={fetchRangeReport}
               disabled={loading || !selectedClass || !selectedSection || !startDate || !endDate || !!dateRangeError}
-              style={{ backgroundColor: '#007bff' }}
             >
-              {loading ? 'Loading...' : 'Fetch Period Report'}
+              <FaSearch /> {loading ? 'Loading...' : 'Fetch Period Report'}
             </button>
             <button
-              className="export-btn"
+              className="action-btn btn-summary"
               onClick={fetchDateRangeReport}
               disabled={loading || !selectedClass || !selectedSection || !startDate || !endDate || !!dateRangeError}
-              style={{ marginLeft: 8, backgroundColor: '#6f42c1' }}
             >
-              {loading ? 'Loading...' : 'Fetch Summary Report'}
+              <FaChartBar /> {loading ? 'Loading...' : 'Fetch Summary Report'}
             </button>
             <button
-              className="export-btn"
+              className="action-btn btn-debug"
               onClick={debugAttendanceData}
               disabled={!selectedClass || !selectedSection || !startDate || !endDate || !!dateRangeError}
-              style={{ marginLeft: 8, backgroundColor: '#dc3545' }}
             >
               Debug Data
             </button>
             <button
-              className="export-btn"
+              className="action-btn btn-secondary"
               onClick={testConnection}
-              style={{ marginLeft: 8, backgroundColor: '#6c757d' }}
             >
               Test Connection
             </button>
           </div>
         </div>
       )}
+
+      {/* Student Report Filter Card */}
       {reportType === 'student' && (
-        <div className="report-filters">
-          <div className="filter-group">
-            <label>Student</label>
-            <select
-              value={selectedStudent}
-              onChange={e => {
-                const id = e.target.value;
-                setSelectedStudent(id);
-                const sObj = students.find(s => s._id === id);
-                if (sObj) {
-                  setSelectedStudentDetails(sObj);
-                  if (sObj.email) setEmailAddress(sObj.email);
-                }
-              }}
-            >
-              <option value="">Select Student</option>
-              {students.map(s => (
-                <option key={s._id} value={s._id}>
-                  {s.fullName} {s.rollNumber ? `(${s.rollNumber})` : ''}
-                </option>
-              ))}
-            </select>
+        <div className="report-filter-card">
+          <div className="report-filters-grid">
+            <div className="filter-group" style={{ minWidth: '240px' }}>
+              <label>Student</label>
+              <select
+                value={selectedStudent}
+                onChange={e => {
+                  const id = e.target.value;
+                  setSelectedStudent(id);
+                  const sObj = students.find(s => s._id === id);
+                  if (sObj) {
+                    setSelectedStudentDetails(sObj);
+                    if (sObj.email) setEmailAddress(sObj.email);
+                  }
+                }}
+              >
+                <option value="">Select Student</option>
+                {students.map(s => (
+                  <option key={s._id} value={s._id}>
+                    {s.fullName} {s.rollNumber ? `(${s.rollNumber})` : ''} - {s.className || ''} {s.section || ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Start Date</label>
+              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            </div>
+            <div className="filter-group">
+              <label>End Date</label>
+              <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+            </div>
+            <div className="filter-group">
+              <label>Recipient Email Address</label>
+              <input
+                type="email"
+                value={emailAddress}
+                onChange={e => setEmailAddress(e.target.value)}
+                placeholder="Enter email to dispatch report"
+              />
+            </div>
           </div>
-          <div className="filter-group">
-            <label>Start Date</label>
-            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-          </div>
-          <div className="filter-group">
-            <label>End Date</label>
-            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
-          </div>
-          <div className="filter-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={emailAddress}
-              onChange={e => setEmailAddress(e.target.value)}
-              placeholder="Enter email to send report"
-              style={{ width: '250px' }}
-            />
-          </div>
-          <div className="filter-group" style={{ alignSelf: 'end' }}>
+
+          <div className="report-actions-row">
             <button
-              className="export-btn"
+              className="action-btn btn-fetch"
               onClick={fetchStudentAttendance}
               disabled={loading || !selectedStudent || !startDate || !endDate}
-              style={{ backgroundColor: '#007bff' }}
             >
-              {loading ? 'Loading...' : 'Fetch Report'}
+              <FaSearch /> {loading ? 'Loading...' : 'Fetch Report'}
             </button>
-            <button className="export-btn" onClick={exportToCSV} disabled={!reports.length} style={{ marginLeft: 8, backgroundColor: '#17a2b8' }}>
-              Export CSV
+            <button className="action-btn btn-csv" onClick={exportToCSV} disabled={!reports.length}>
+              <FaDownload /> Export CSV
             </button>
             <button
-              className="export-btn"
-              style={{ marginLeft: 8, backgroundColor: '#28a745' }}
+              className="action-btn btn-email"
               onClick={() => {
                 if (!reports.length) return;
                 const selectedStudentData = students.find(s => s._id === selectedStudent);
@@ -1376,7 +1364,7 @@ const AttendanceReport = () => {
               }}
               disabled={!reports.length || !emailAddress || sendingEmail}
             >
-              {sendingEmail ? 'Sending...' : 'Send Email'}
+              <FaEnvelope /> {sendingEmail ? 'Sending...' : 'Send Email'}
             </button>
           </div>
         </div>

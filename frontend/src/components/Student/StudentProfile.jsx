@@ -42,6 +42,7 @@ const StudentProfile = () => {
             setStudent(data);
             setEditForm({
                 academicYear: data.academicYear || '',
+                semester: data.semester || 'Semester 4',
                 phoneNumber: data.phoneNumber || '',
                 parentName: data.parentName || '',
                 parentPhone: data.parentPhone || '',
@@ -67,6 +68,7 @@ const StudentProfile = () => {
         if (student) {
             setEditForm({
                 academicYear: student.academicYear || '',
+                semester: student.semester || 'Semester 4',
                 phoneNumber: student.phoneNumber || '',
                 parentName: student.parentName || '',
                 parentPhone: student.parentPhone || '',
@@ -335,7 +337,17 @@ const StudentProfile = () => {
                                     <span>Student Phone Number</span>
                                 </div>
                                 <div className="ksp-row-val">
-                                    {student.phoneNumber || <span className="ksp-empty">Not provided</span>}
+                                    {student.phoneNumber ? (
+                                        <span>{student.phoneNumber}</span>
+                                    ) : (
+                                        <button 
+                                            type="button" 
+                                            className="ksp-badge-fill-btn"
+                                            onClick={handleOpenEditModal}
+                                        >
+                                            + Add Phone Number
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -345,7 +357,17 @@ const StudentProfile = () => {
                                     <span>Parent / Guardian Name</span>
                                 </div>
                                 <div className="ksp-row-val">
-                                    {student.parentName || <span className="ksp-empty">Not provided</span>}
+                                    {student.parentName ? (
+                                        <span>{student.parentName}</span>
+                                    ) : (
+                                        <button 
+                                            type="button" 
+                                            className="ksp-badge-fill-btn"
+                                            onClick={handleOpenEditModal}
+                                        >
+                                            + Add Parent Name
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -355,7 +377,17 @@ const StudentProfile = () => {
                                     <span>Parent Phone Number</span>
                                 </div>
                                 <div className="ksp-row-val">
-                                    {student.parentPhone || <span className="ksp-empty">Not provided</span>}
+                                    {student.parentPhone ? (
+                                        <span>{student.parentPhone}</span>
+                                    ) : (
+                                        <button 
+                                            type="button" 
+                                            className="ksp-badge-fill-btn"
+                                            onClick={handleOpenEditModal}
+                                        >
+                                            + Add Parent Phone
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -365,7 +397,17 @@ const StudentProfile = () => {
                                     <span>Residential Address</span>
                                 </div>
                                 <div className="ksp-row-val address-val">
-                                    {student.address || <span className="ksp-empty">Not provided</span>}
+                                    {student.address ? (
+                                        <span>{student.address}</span>
+                                    ) : (
+                                        <button 
+                                            type="button" 
+                                            className="ksp-badge-fill-btn"
+                                            onClick={handleOpenEditModal}
+                                        >
+                                            + Add Address
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -385,7 +427,7 @@ const StudentProfile = () => {
                                     </div>
                                     <div>
                                         <h2>Update Profile Details</h2>
-                                        <p>Keep your academic year & contact info up to date</p>
+                                        <p>Keep your academic year, semester & contact coordinates up to date</p>
                                     </div>
                                 </div>
                                 <button
@@ -402,24 +444,50 @@ const StudentProfile = () => {
                                 <div className="ksp-form-notice">
                                     <FaInfoCircle />
                                     <span>
-                                        Academic details such as <strong>Class</strong>, <strong>Section</strong>, and <strong>Semester ({semesterDisplay})</strong> are managed by teachers. You can fill and update your <strong>Academic Year</strong> and contact details.
+                                        Fill or update your <strong>Academic Year</strong>, <strong>Semester</strong> (Sem 1 to 10), and <strong>Contact Details</strong>. Keep them accurate for official records.
                                     </span>
                                 </div>
 
-                                <div className="ksp-form-group">
-                                    <label htmlFor="academicYear">
-                                        Academic Year / Batch <span className="req">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="academicYear"
-                                        name="academicYear"
-                                        value={editForm.academicYear}
-                                        onChange={handleInputChange}
-                                        placeholder="e.g. 2022 - 2026"
-                                        required
-                                    />
-                                    <span className="ksp-input-hint">Format: YYYY - YYYY (e.g. 2022 - 2026)</span>
+                                <div className="ksp-form-row">
+                                    <div className="ksp-form-group half">
+                                        <label htmlFor="academicYear">
+                                            Academic Year / Batch <span className="req">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="academicYear"
+                                            name="academicYear"
+                                            value={editForm.academicYear}
+                                            onChange={handleInputChange}
+                                            placeholder="e.g. 2022 - 2026"
+                                            required
+                                        />
+                                        <span className="ksp-input-hint">e.g. 2022 - 2026 or 2022 - 2027</span>
+                                    </div>
+
+                                    <div className="ksp-form-group half">
+                                        <label htmlFor="semester">Current Semester</label>
+                                        <select
+                                            id="semester"
+                                            name="semester"
+                                            value={editForm.semester}
+                                            onChange={handleInputChange}
+                                            style={{
+                                                padding: '0.6rem 0.85rem',
+                                                border: '1.5px solid #CBD5E1',
+                                                borderRadius: '9px',
+                                                fontSize: '0.88rem',
+                                                color: '#0B2545',
+                                                backgroundColor: '#fff',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            {Array.from({ length: 10 }, (_, i) => `Semester ${i + 1}`).map(s => (
+                                                <option key={s} value={s}>{s}</option>
+                                            ))}
+                                        </select>
+                                        <span className="ksp-input-hint">Select semester (1 to 10)</span>
+                                    </div>
                                 </div>
 
                                 <div className="ksp-form-row">
@@ -450,7 +518,7 @@ const StudentProfile = () => {
                                 </div>
 
                                 <div className="ksp-form-row">
-                                    <div className="ksp-form-group half">
+                                    <div className="ksp-form-group full-width">
                                         <label htmlFor="parentPhone">Parent Phone Number</label>
                                         <input
                                             type="tel"
@@ -460,16 +528,6 @@ const StudentProfile = () => {
                                             onChange={handleInputChange}
                                             placeholder="10-digit parent number"
                                             maxLength={10}
-                                        />
-                                    </div>
-
-                                    <div className="ksp-form-group half">
-                                        <label>Semester (Current)</label>
-                                        <input
-                                            type="text"
-                                            value={semesterDisplay}
-                                            disabled
-                                            style={{ backgroundColor: '#F1F5F9', color: '#64748B', cursor: 'not-allowed' }}
                                         />
                                     </div>
                                 </div>
@@ -482,7 +540,7 @@ const StudentProfile = () => {
                                         value={editForm.address}
                                         onChange={handleInputChange}
                                         rows={3}
-                                        placeholder="Permanent address (City, State, Pincode)"
+                                        placeholder="Permanent address (Door No, Street, City, Pincode)"
                                     />
                                 </div>
 

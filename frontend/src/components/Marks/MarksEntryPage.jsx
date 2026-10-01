@@ -226,7 +226,11 @@ const MarksEntryPage = () => {
                             onChange={e => setSelectedSubject(e.target.value)}
                         >
                             <option value="">Select Subject</option>
-                            {subjects.map(s => <option key={s._id} value={s._id}>{s.name} ({s.code})</option>)}
+                            {subjects.map(s => (
+                                <option key={s._id} value={s._id}>
+                                    {s.name} ({s.code}) — {s.semester || 'Semester 1'}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

@@ -19,6 +19,11 @@ const subjectSchema = new mongoose.Schema({
         min: [1, 'Max marks must be at least 1'],
         max: [1000, 'Max marks cannot exceed 1000'] // Allowing up to 1000 for flexibility, though usually 100
     },
+    semester: {
+        type: String,
+        default: 'Semester 1',
+        trim: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
