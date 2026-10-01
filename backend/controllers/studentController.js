@@ -79,9 +79,52 @@ exports.getDashboardStats = async (req, res) => {
         const marks = await Mark.find({ studentId: student._id });
         const totalMarks = marks.reduce((sum, mark) => sum + (mark.marksObtained || 0), 0);
 
+        // Build monthly attendance breakdown for the line chart
+        const monthlyMap = {};
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        attendanceRecords.forEach(record => {
+            if (!record.date) return;
+            const d = new Date(record.date);
+            const key = `${d.getFullYear()}-${d.getMonth()}`;
+            if (!monthlyMap[key]) {
+                monthlyMap[key] = { month: monthNames[d.getMonth()], year: d.getFullYear(), present: 0, total: 0 };
+            }
+            const processPeriodMonthly = (p) => {
+                const st = (p.status || '').toLowerCase();
+                if (st && st !== 'not-marked') {
+                    monthlyMap[key].total++;
+                    if (st === 'present' || st === 'late') monthlyMap[key].present += 1;
+                    else if (st === 'half-day') monthlyMap[key].present += 0.5;
+                }
+            };
+            if (record.forenoon && record.forenoon.periods) record.forenoon.periods.forEach(processPeriodMonthly);
+            if (record.afternoon && record.afternoon.periods) record.afternoon.periods.forEach(processPeriodMonthly);
+        });
+
+        const monthlyAttendance = Object.values(monthlyMap)
+            .sort((a, b) => (a.year * 12 + monthNames.indexOf(a.month)) - (b.year * 12 + monthNames.indexOf(b.month)))
+            .map(m => ({
+                month: m.month,
+                percentage: m.total > 0 ? ((m.present / m.total) * 100).toFixed(1) : '0'
+            }));
+
+        // Derive department and academic year from className (e.g. "CSE", "22ISR017" roll pattern)
+        const rollYear = student.rollNumber ? `20${student.rollNumber.substring(0, 2)}` : null;
+        const gradYear = rollYear ? parseInt(rollYear) + 4 : null;
+        const academicYear = rollYear && gradYear ? `${rollYear} - ${gradYear}` : 'N/A';
+
         res.json({
             studentName: student.fullName,
             rollNumber: student.rollNumber,
+            studentInfo: {
+                rollNumber: student.rollNumber,
+                department: student.className || 'N/A',
+                section: student.section || 'N/A',
+                email: student.email,
+                academicYear,
+                phoneNumber: student.phoneNumber,
+            },
+            monthlyAttendance,
             stats: {
                 attendancePercentage,
                 totalDays,

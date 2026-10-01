@@ -144,6 +144,14 @@ function App() {
               }
             />
             <Route
+              path="/student/subjects"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentMarks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/student/profile"
               element={
                 <ProtectedRoute allowedRoles={['student']}>
@@ -163,15 +171,15 @@ function App() {
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
-        closeOnClick
+        closeOnClick={true}
         rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        pauseOnFocusLoss={false}
+        draggable={true}
+        pauseOnHover={false}
         theme="light"
         limit={3}
         style={{
-          fontSize: '15px',
+          fontSize: '14px',
           fontWeight: '500',
         }}
       />
