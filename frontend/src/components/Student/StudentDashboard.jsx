@@ -459,6 +459,7 @@ const StudentDashboard = () => {
     const rollNo    = studentInfo.rollNumber || stored.rollNumber || '—';
     const dept      = studentInfo.department || stored.className  || '—';
     const acYear    = studentInfo.academicYear || '2022 – 2026';
+    const sem       = studentInfo.semester || 'Semester 4';
     const attPct    = parseFloat(stats?.attendancePercentage || 0);
     const totalDays = stats?.totalDays  || 0;
     const presDays  = stats?.presentDays || 0;
@@ -694,6 +695,13 @@ const StudentDashboard = () => {
                                     <div className="ksd-pill-text">
                                         <strong>{acYear}</strong>
                                         <span>Academic Year</span>
+                                    </div>
+                                </div>
+                                <div className="ksd-pill">
+                                    <FaLayerGroup className="ksd-pill-ico"/>
+                                    <div className="ksd-pill-text">
+                                        <strong>{sem}</strong>
+                                        <span>Semester</span>
                                     </div>
                                 </div>
                             </div>

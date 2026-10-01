@@ -53,6 +53,16 @@ const studentSchema = new mongoose.Schema({
     trim: true,
     maxlength: [200, 'Address cannot exceed 200 characters']
   },
+  semester: {
+    type: String,
+    default: 'Semester 4',
+    trim: true
+  },
+  academicYear: {
+    type: String,
+    default: '',
+    trim: true
+  },
   isActive: {
     type: Boolean,
     default: true

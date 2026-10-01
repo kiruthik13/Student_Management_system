@@ -16,6 +16,8 @@ exports.createStudent = async (req, res) => {
             parentName,
             parentPhone,
             address,
+            semester,
+            academicYear,
             password
         } = req.body;
 
@@ -57,7 +59,9 @@ exports.createStudent = async (req, res) => {
             phoneNumber,
             parentName,
             parentPhone,
-            address
+            address,
+            semester: semester || 'Semester 4',
+            academicYear: academicYear || ''
         });
 
         const savedStudent = await student.save();
@@ -165,7 +169,9 @@ exports.updateStudent = async (req, res) => {
             phoneNumber,
             parentName,
             parentPhone,
-            address
+            address,
+            semester,
+            academicYear
         } = req.body;
 
         const student = await Student.findById(req.params.id);
@@ -196,10 +202,12 @@ exports.updateStudent = async (req, res) => {
         if (email) student.email = email.toLowerCase();
         if (className) student.className = className;
         if (section) student.section = section;
-        if (phoneNumber) student.phoneNumber = phoneNumber;
-        if (parentName) student.parentName = parentName;
-        if (parentPhone) student.parentPhone = parentPhone;
-        if (address) student.address = address;
+        if (phoneNumber !== undefined) student.phoneNumber = phoneNumber;
+        if (parentName !== undefined) student.parentName = parentName;
+        if (parentPhone !== undefined) student.parentPhone = parentPhone;
+        if (address !== undefined) student.address = address;
+        if (semester) student.semester = semester;
+        if (academicYear !== undefined) student.academicYear = academicYear;
 
         const updatedStudent = await student.save();
 

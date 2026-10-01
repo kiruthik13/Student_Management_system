@@ -108,10 +108,12 @@ exports.getDashboardStats = async (req, res) => {
                 percentage: m.total > 0 ? ((m.present / m.total) * 100).toFixed(1) : '0'
             }));
 
-        // Derive department and academic year from className (e.g. "CSE", "22ISR017" roll pattern)
+        // Derive default academic year from rollNumber pattern if student hasn't entered one
         const rollYear = student.rollNumber ? `20${student.rollNumber.substring(0, 2)}` : null;
         const gradYear = rollYear ? parseInt(rollYear) + 4 : null;
-        const academicYear = rollYear && gradYear ? `${rollYear} - ${gradYear}` : 'N/A';
+        const computedAcademicYear = rollYear && gradYear ? `${rollYear} - ${gradYear}` : '2022 - 2026';
+        const academicYear = student.academicYear || computedAcademicYear;
+        const semester = student.semester || 'Semester 4';
 
         res.json({
             studentName: student.fullName,
@@ -122,6 +124,7 @@ exports.getDashboardStats = async (req, res) => {
                 section: student.section || 'N/A',
                 email: student.email,
                 academicYear,
+                semester,
                 phoneNumber: student.phoneNumber,
             },
             monthlyAttendance,
@@ -254,5 +257,39 @@ exports.getProfile = async (req, res) => {
     } catch (error) {
         console.error('Get Profile Error:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// PUT /student/profile
+exports.updateProfile = async (req, res) => {
+    try {
+        const student = await getStudentProfile(req.user.email);
+        if (!student) return res.status(404).json({ message: 'Student profile not found' });
+
+        const {
+            phoneNumber,
+            parentName,
+            parentPhone,
+            address,
+            academicYear,
+            semester
+        } = req.body;
+
+        if (phoneNumber !== undefined) student.phoneNumber = phoneNumber;
+        if (parentName !== undefined) student.parentName = parentName;
+        if (parentPhone !== undefined) student.parentPhone = parentPhone;
+        if (address !== undefined) student.address = address;
+        if (academicYear !== undefined) student.academicYear = academicYear.trim();
+        if (semester !== undefined && semester) student.semester = semester.trim();
+
+        await student.save();
+
+        res.json({
+            message: 'Profile updated successfully',
+            student
+        });
+    } catch (error) {
+        console.error('Update Profile Error:', error);
+        res.status(500).json({ message: 'Server error updating profile', error: error.message });
     }
 };

@@ -1,0 +1,522 @@
+/* ════════════════════════════════════════════════════════════════════
+   KEC Student Marks — Ultra Premium Theme
+   ════════════════════════════════════════════════════════════════════ */
+
+.ksm-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════
+   PAGE HEADER
+   ══════════════════════════════════════════ */
+.ksm-page-header {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 1.4rem 1.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.ksm-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.ksm-header-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #008FD5 0%, #0077B6 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 14px rgba(0, 143, 213, 0.35);
+    flex-shrink: 0;
+}
+
+.ksm-breadcrumbs {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #008FD5;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+}
+
+.ksm-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0B2545;
+    margin: 0 0 3px 0;
+    letter-spacing: -0.01em;
+}
+
+.ksm-sub {
+    font-size: 0.8rem;
+    color: #64748B;
+    margin: 0;
+}
+
+.ksm-report-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.62rem 1.15rem;
+    background: #F0F9FF;
+    border: 1.5px solid #BAE6FD;
+    border-radius: 11px;
+    color: #0284C7;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.ksm-report-btn:hover {
+    background: #008FD5;
+    color: #FFFFFF;
+    border-color: #008FD5;
+    box-shadow: 0 4px 14px rgba(0, 143, 213, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════
+   STATS KPI ROW
+   ══════════════════════════════════════════ */
+.ksm-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem;
+}
+
+.ksm-kpi-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.25rem 1.35rem;
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+    transition: all 0.18s ease;
+}
+
+.ksm-kpi-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.ksm-kpi-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.ksm-kpi-icon-box.blue {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.ksm-kpi-icon-box.green {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.ksm-kpi-icon-box.amber {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.ksm-kpi-icon-box.purple {
+    background: #F3E8FF;
+    color: #9333EA;
+}
+
+.ksm-kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.ksm-kpi-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ksm-kpi-val {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0B2545;
+    line-height: 1.2;
+    margin: 2px 0;
+}
+
+.ksm-kpi-val.text-status {
+    font-size: 1.15rem;
+    color: #0284C7;
+}
+
+.ksm-kpi-sub {
+    font-size: 0.72rem;
+    color: #94A3B8;
+}
+
+.text-green {
+    color: #16A34A !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+}
+
+/* ══════════════════════════════════════════
+   CONTROLS BAR
+   ══════════════════════════════════════════ */
+.ksm-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ksm-search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    align-items: center;
+}
+
+.ksm-search-ico {
+    position: absolute;
+    left: 14px;
+    color: #94A3B8;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.ksm-search-input {
+    width: 100%;
+    padding: 0.65rem 2.2rem 0.65rem 2.5rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 11px;
+    font-size: 0.86rem;
+    color: #0B2545;
+    outline: none;
+    transition: all 0.18s ease;
+}
+
+.ksm-search-input:focus {
+    border-color: #008FD5;
+    box-shadow: 0 0 0 3px rgba(0, 143, 213, 0.15);
+}
+
+.ksm-clear-search {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.ksm-clear-search:hover {
+    color: #EF4444;
+}
+
+.ksm-filter-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ksm-filter-ico {
+    position: absolute;
+    left: 12px;
+    color: #64748B;
+    font-size: 0.82rem;
+    pointer-events: none;
+}
+
+.ksm-select {
+    padding: 0.65rem 1.4rem 0.65rem 2.2rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 11px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #0B2545;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.ksm-select:focus {
+    border-color: #008FD5;
+}
+
+/* ══════════════════════════════════════════
+   TABLE CARD
+   ══════════════════════════════════════════ */
+.ksm-table-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+}
+
+.ksm-table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.ksm-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.ksm-table thead th {
+    background: #F8FAFC;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.25rem;
+    border-bottom: 1.5px solid #E2E8F0;
+}
+
+.ksm-table tbody tr {
+    border-bottom: 1px solid #F1F5F9;
+    transition: background 0.15s ease;
+}
+
+.ksm-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ksm-table tbody tr:hover {
+    background: #F8FCFF;
+}
+
+.ksm-table td {
+    padding: 1.05rem 1.25rem;
+    vertical-align: middle;
+    font-size: 0.86rem;
+    color: #1E293B;
+}
+
+.ksm-td-idx {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #94A3B8;
+}
+
+.ksm-subject-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ksm-subject-name {
+    font-weight: 700;
+    color: #0B2545;
+    font-size: 0.92rem;
+}
+
+.ksm-subject-code {
+    display: inline-block;
+    align-self: flex-start;
+    background: #F1F5F9;
+    color: #475569;
+    font-family: monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid #E2E8F0;
+}
+
+.ksm-exam-badge {
+    display: inline-block;
+    background: #E0F2FE;
+    color: #0284C7;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid #BAE6FD;
+}
+
+/* Marks progress cell */
+.ksm-marks-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ksm-marks-text {
+    font-size: 0.88rem;
+    color: #0B2545;
+}
+
+.ksm-marks-text strong {
+    font-size: 1rem;
+    color: #0B2545;
+}
+
+.ksm-marks-text span {
+    color: #94A3B8;
+    font-size: 0.78rem;
+    margin-left: 2px;
+}
+
+.ksm-progress-bg {
+    width: 100%;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.ksm-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.ksm-progress-fill.green { background: #10B981; }
+.ksm-progress-fill.blue  { background: #008FD5; }
+.ksm-progress-fill.teal  { background: #0D9488; }
+.ksm-progress-fill.amber { background: #F59E0B; }
+.ksm-progress-fill.red   { background: #EF4444; }
+
+/* Percentage pills */
+.ksm-pct-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.ksm-pct-pill.green { background: #DCFCE7; color: #15803D; }
+.ksm-pct-pill.blue  { background: #E0F2FE; color: #0369A1; }
+.ksm-pct-pill.teal  { background: #CCFBF1; color: #0F766E; }
+.ksm-pct-pill.amber { background: #FEF3C7; color: #B45309; }
+.ksm-pct-pill.red   { background: #FEE2E2; color: #B91C1C; }
+
+/* Grade tags */
+.ksm-grade-tag {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    padding: 3px 6px;
+    border-radius: 8px;
+}
+
+.ksm-grade-tag strong {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.ksm-grade-tag small {
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.ksm-grade-tag.green { background: #DCFCE7; color: #15803D; }
+.ksm-grade-tag.blue  { background: #E0F2FE; color: #0369A1; }
+.ksm-grade-tag.teal  { background: #CCFBF1; color: #0F766E; }
+.ksm-grade-tag.amber { background: #FEF3C7; color: #B45309; }
+.ksm-grade-tag.red   { background: #FEE2E2; color: #B91C1C; }
+
+/* Empty state */
+.ksm-empty-wrap {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ksm-empty-icon {
+    font-size: 3rem;
+    color: #CBD5E1;
+    margin-bottom: 0.5rem;
+}
+
+.ksm-empty-wrap h3 {
+    font-size: 1.15rem;
+    color: #1E293B;
+    margin: 0;
+}
+
+.ksm-empty-wrap p {
+    font-size: 0.84rem;
+    color: #64748B;
+    max-width: 400px;
+    margin: 0;
+}
+
+.ksm-reset-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.1rem;
+    background: #008FD5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ksm-loading-wrap {
+    padding: 3rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .ksm-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .ksm-header-right {
+        width: 100%;
+    }
+    .ksm-report-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

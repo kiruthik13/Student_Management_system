@@ -1,89 +1,736 @@
-.student-profile-container {
-    padding: 2rem;
-    max-width: 800px;
+/* ════════════════════════════════════════════════════════════════════
+   KEC Student Profile — Ultra Premium Theme
+   Matches Student Dashboard & KEC Campus Gate Aesthetic
+   ════════════════════════════════════════════════════════════════════ */
+
+.ksp-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.profile-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 153, 216, 0.08);
-    border: 1px solid #E2E8F0;
+/* ══════════════════════════════════════════
+   CAMPUS GATE HERO CARD
+   ══════════════════════════════════════════ */
+.ksp-hero-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 32px rgba(11, 43, 76, 0.18);
     overflow: hidden;
-    margin-top: 2rem;
-}
-
-.profile-header {
-    background: linear-gradient(135deg, #0B2545 0%, #0099D8 70%, #7CB342 100%);
-    color: white;
-    padding: 2rem;
+    min-height: 220px;
+    background: #0B2B4C; /* Fallback */
     display: flex;
     align-items: center;
-    gap: 2rem;
 }
 
-.avatar-circle {
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.2);
+.ksp-hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+    z-index: 0;
+    display: block;
+}
+
+/* KEC Brand Gradient Overlay */
+.ksp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(5, 55, 105, 0.97) 0%,
+        rgba(0, 91, 155, 0.88) 32%,
+        rgba(0, 145, 190, 0.45) 55%,
+        rgba(10, 110, 80, 0.8) 82%,
+        rgba(7, 92, 57, 0.94) 100%
+    );
+    z-index: 1;
+}
+
+/* Dot Pattern */
+.ksp-hero-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Content Container */
+.ksp-hero-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1.85rem 2.2rem;
+    gap: 1.5rem;
+}
+
+.ksp-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    flex: 1;
+}
+
+/* Avatar Circle with Glow */
+.ksp-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ksp-avatar-circle {
+    width: 82px;
+    height: 82px;
     border-radius: 50%;
+    background: linear-gradient(135deg, #008FD5 0%, #72BE44 100%);
+    color: #FFFFFF;
+    font-size: 2.2rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 18px rgba(0, 143, 213, 0.45), inset 0 0 0 3px rgba(255, 255, 255, 0.85);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.header-info h2 {
-    margin: 0;
-    font-size: 1.8rem;
+.ksp-avatar-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: #10B981;
+    color: #FFFFFF;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.roll-number {
-    margin: 0.5rem 0 0;
-    opacity: 0.9;
-    font-size: 1.1rem;
-}
-
-.profile-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    padding: 2rem;
-}
-
-.detail-item {
+.ksp-hero-info {
     display: flex;
     flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ksp-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ksp-status-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #72BE44;
+    box-shadow: 0 0 8px #72BE44;
+    animation: kspPulse 2s infinite;
+}
+
+@keyframes kspPulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.ksp-student-name {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+    margin: 0;
+    line-height: 1.15;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Hero Badges / Pills */
+.ksp-hero-pills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+}
+
+.ksp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.ksp-pill:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ksp-pill-ico {
+    color: #72BE44;
+    font-size: 0.85rem;
+}
+
+.ksp-pill-semester {
+    background: rgba(0, 143, 213, 0.25);
+    border-color: rgba(0, 143, 213, 0.5);
+}
+
+.ksp-pill-semester .ksp-pill-ico {
+    color: #38BDF8;
+}
+
+.ksp-pill-year {
+    background: rgba(114, 190, 68, 0.22);
+    border-color: rgba(114, 190, 68, 0.45);
+    cursor: pointer;
+}
+
+.ksp-pill-year.unset {
+    background: rgba(245, 158, 11, 0.25);
+    border-color: rgba(245, 158, 11, 0.5);
+    animation: kspAttention 2s infinite ease-in-out;
+}
+
+@keyframes kspAttention {
+    0%, 100% { border-color: rgba(245, 158, 11, 0.5); }
+    50% { border-color: #F59E0B; }
+}
+
+/* Hero Right Actions */
+.ksp-hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.85rem;
+    flex-shrink: 0;
+}
+
+.ksp-edit-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 1.25rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0B2545;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ksp-edit-profile-btn:hover {
+    background: #FFFFFF;
+    color: #008FD5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 143, 213, 0.35);
+}
+
+.ksp-edit-ico {
+    font-size: 0.9rem;
+    color: #008FD5;
+}
+
+.ksp-hero-quote {
+    font-size: 0.78rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.82);
+    text-align: right;
+    max-width: 240px;
+}
+
+/* ══════════════════════════════════════════
+   DETAILS GRID
+   ══════════════════════════════════════════ */
+.ksp-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+    gap: 1.35rem;
+}
+
+.ksp-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    padding: 1.5rem 1.65rem;
+    transition: all 0.2s ease;
+}
+
+.ksp-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.ksp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid #F1F5F9;
+    margin-bottom: 1.15rem;
+}
+
+.ksp-card-title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.ksp-card-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.ksp-card-icon-box.blue {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.ksp-card-icon-box.green {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.ksp-card-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0B2545;
+    margin: 0 0 2px 0;
+}
+
+.ksp-card-sub {
+    font-size: 0.76rem;
+    color: #64748B;
+    margin: 0;
+}
+
+.ksp-card-edit-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    color: #0284C7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.ksp-card-edit-btn:hover {
+    background: #E0F2FE;
+    border-color: #BAE6FD;
+}
+
+/* Rows */
+.ksp-info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ksp-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0.85rem;
+    background: #F8FAFC;
+    border: 1px solid #F1F5F9;
+    border-radius: 10px;
+    transition: background 0.15s;
+}
+
+.ksp-info-row:hover {
+    background: #F1F5F9;
+}
+
+.ksp-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.ksp-row-ico {
+    color: #008FD5;
+    font-size: 0.85rem;
+}
+
+.ksp-row-val {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #0B2545;
+    text-align: right;
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
 }
 
-.detail-item.full-width {
-    grid-column: 1 / -1;
+.ksp-row-val.highlight {
+    color: #0284C7;
+    font-family: monospace;
+    font-size: 0.95rem;
 }
 
-.label {
-    color: #666;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
+.ksp-badge-sem {
+    background: #E0F2FE;
+    color: #0369A1;
+    padding: 0.2rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
 }
 
-.value {
-    color: #333;
+.ksp-hint-sem {
+    font-size: 0.7rem;
+    color: #94A3B8;
+    font-weight: normal;
+}
+
+.ksp-badge-year {
+    background: #DCFCE7;
+    color: #15803D;
+    padding: 0.2rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.ksp-badge-fill-btn {
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    color: #B45309;
+    padding: 0.2rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.ksp-badge-fill-btn:hover {
+    background: #FDE68A;
+    color: #92400E;
+}
+
+.status-active {
+    color: #16A34A;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.email-val {
+    font-family: inherit;
+    color: #0284C7;
+    word-break: break-all;
+}
+
+.address-val {
+    max-width: 260px;
+    text-align: right;
+    line-height: 1.3;
+}
+
+.ksp-empty {
+    color: #94A3B8;
+    font-style: italic;
+    font-weight: 400;
+}
+
+/* ══════════════════════════════════════════
+   MODAL
+   ══════════════════════════════════════════ */
+.ksp-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.ksp-modal {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 560px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: kspModalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes kspModalPop {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ksp-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.ksp-modal-head-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ksp-modal-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #E0F2FE;
+    color: #0284C7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.1rem;
-    font-weight: 500;
+}
+
+.ksp-modal-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0B2545;
+    margin: 0;
+}
+
+.ksp-modal-header p {
+    font-size: 0.76rem;
+    color: #64748B;
+    margin: 2px 0 0 0;
+}
+
+.ksp-modal-close {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+}
+
+.ksp-modal-close:hover {
+    color: #EF4444;
+    background: #FEE2E2;
+}
+
+.ksp-modal-form {
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.05rem;
+}
+
+.ksp-form-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.95rem;
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    border-radius: 10px;
+    color: #0369A1;
+    font-size: 0.79rem;
+    line-height: 1.4;
+}
+
+.ksp-form-notice svg {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ksp-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ksp-form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.ksp-form-group label .req {
+    color: #EF4444;
+}
+
+.ksp-form-group input,
+.ksp-form-group textarea {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    color: #0B2545;
+    background: #FFFFFF;
+    transition: all 0.16s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.ksp-form-group input:focus,
+.ksp-form-group textarea:focus {
+    border-color: #008FD5;
+    box-shadow: 0 0 0 3px rgba(0, 143, 213, 0.16);
+}
+
+.ksp-input-hint {
+    font-size: 0.7rem;
+    color: #94A3B8;
+}
+
+.ksp-form-row {
+    display: flex;
+    gap: 0.9rem;
+}
+
+.ksp-form-group.half {
+    flex: 1;
+}
+
+.ksp-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #F1F5F9;
+}
+
+.ksp-btn-cancel {
+    padding: 0.6rem 1.15rem;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    border-radius: 9px;
+    color: #475569;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ksp-btn-cancel:hover {
+    background: #E2E8F0;
+}
+
+.ksp-btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.35rem;
+    background: linear-gradient(135deg, #008FD5 0%, #0077B6 100%);
+    border: none;
+    border-radius: 9px;
+    color: #FFFFFF;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 143, 213, 0.3);
+    transition: all 0.18s ease;
+}
+
+.ksp-btn-save:hover {
+    background: linear-gradient(135deg, #0284C7 0%, #005F99 100%);
+    box-shadow: 0 6px 16px rgba(0, 143, 213, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .ksp-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+    }
+    .ksp-hero-right {
+        align-items: flex-start;
+        width: 100%;
+    }
+    .ksp-hero-quote {
+        text-align: left;
+    }
+    .ksp-details-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
-    .profile-header {
+    .ksp-hero-left {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 1rem;
     }
-
-    .student-profile-container {
-        padding: 1rem;
+    .ksp-avatar-circle {
+        width: 68px;
+        height: 68px;
+        font-size: 1.8rem;
+    }
+    .ksp-student-name {
+        font-size: 1.45rem;
+    }
+    .ksp-form-row {
+        flex-direction: column;
+        gap: 0.85rem;
     }
 }

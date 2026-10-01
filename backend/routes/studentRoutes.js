@@ -11,5 +11,6 @@ router.get('/dashboard', studentController.getDashboardStats);
 router.get('/attendance', studentController.getAttendance);
 router.get('/marks', studentController.getMarks);
 router.get('/profile', studentController.getProfile);
+router.put('/profile', studentController.updateProfile);
 
 module.exports = router;

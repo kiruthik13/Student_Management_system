@@ -13,6 +13,8 @@ const StudentForm = ({ student, onSave, onCancel }) => {
     rollNumber: '',
     className: '',
     section: '',
+    semester: 'Semester 4',
+    academicYear: '',
     phoneNumber: '',
     parentName: '',
     parentPhone: '',
@@ -30,6 +32,8 @@ const StudentForm = ({ student, onSave, onCancel }) => {
         rollNumber: student.rollNumber || '',
         className: student.className || '',
         section: student.section || '',
+        semester: student.semester || 'Semester 4',
+        academicYear: student.academicYear || '',
         phoneNumber: student.phoneNumber || '',
         parentName: student.parentName || '',
         parentPhone: student.parentPhone || '',
@@ -195,6 +199,47 @@ const StudentForm = ({ student, onSave, onCancel }) => {
               value={formData.section}
               onChange={handleChange}
               required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group half">
+            <label>Semester (Teacher Assigned) *</label>
+            <select
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                border: '1.5px solid #CBD5E1',
+                borderRadius: '8px',
+                fontSize: '0.92rem',
+                backgroundColor: '#fff',
+                color: '#0B2545',
+                fontWeight: '500'
+              }}
+            >
+              <option value="Semester 1">Semester 1</option>
+              <option value="Semester 2">Semester 2</option>
+              <option value="Semester 3">Semester 3</option>
+              <option value="Semester 4">Semester 4</option>
+              <option value="Semester 5">Semester 5</option>
+              <option value="Semester 6">Semester 6</option>
+              <option value="Semester 7">Semester 7</option>
+              <option value="Semester 8">Semester 8</option>
+            </select>
+          </div>
+          <div className="form-group half">
+            <label>Academic Year</label>
+            <input
+              type="text"
+              name="academicYear"
+              value={formData.academicYear}
+              onChange={handleChange}
+              placeholder="e.g. 2022 - 2026 (Optional)"
             />
           </div>
         </div>

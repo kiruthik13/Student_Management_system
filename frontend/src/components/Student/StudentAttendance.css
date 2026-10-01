@@ -1,0 +1,486 @@
+/* ════════════════════════════════════════════════════════════════════
+   KEC Student Attendance — Ultra Premium Theme
+   ════════════════════════════════════════════════════════════════════ */
+
+.ksa-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════
+   PAGE HEADER
+   ══════════════════════════════════════════ */
+.ksa-page-header {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 1.4rem 1.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.ksa-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.ksa-header-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    flex-shrink: 0;
+}
+
+.ksa-breadcrumbs {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #059669;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+}
+
+.ksa-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0B2545;
+    margin: 0 0 3px 0;
+    letter-spacing: -0.01em;
+}
+
+.ksa-sub {
+    font-size: 0.8rem;
+    color: #64748B;
+    margin: 0;
+}
+
+.ksa-report-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.62rem 1.15rem;
+    background: #F0FDF4;
+    border: 1.5px solid #BBF7D0;
+    border-radius: 11px;
+    color: #15803D;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.ksa-report-btn:hover {
+    background: #10B981;
+    color: #FFFFFF;
+    border-color: #10B981;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════
+   STATS GRID
+   ══════════════════════════════════════════ */
+.ksa-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem;
+}
+
+.ksa-kpi-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.25rem 1.35rem;
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+    transition: all 0.18s ease;
+}
+
+.ksa-kpi-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.ksa-kpi-card.gauge-card {
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.ksa-kpi-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.ksa-kpi-icon-box.blue {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.ksa-kpi-icon-box.green {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.ksa-kpi-icon-box.red {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.ksa-kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.ksa-kpi-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ksa-kpi-val {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0B2545;
+    line-height: 1.2;
+    margin: 2px 0;
+}
+
+.ksa-kpi-sub {
+    font-size: 0.72rem;
+    color: #94A3B8;
+}
+
+.text-green { color: #16A34A !important; }
+.text-red   { color: #DC2626 !important; }
+
+.ksa-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-top: 2px;
+}
+
+.ksa-status-pill.eligible {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.ksa-status-pill.warning {
+    background: #FEF3C7;
+    color: #B45309;
+}
+
+/* ══════════════════════════════════════════
+   FILTER BAR
+   ══════════════════════════════════════════ */
+.ksa-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ksa-filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: #FFFFFF;
+    padding: 0.35rem;
+    border: 1px solid #CBD5E1;
+    border-radius: 12px;
+}
+
+.ksa-tab-btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #64748B;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.ksa-tab-btn:hover {
+    color: #0B2545;
+    background: #F1F5F9;
+}
+
+.ksa-tab-btn.active {
+    background: #008FD5;
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0, 143, 213, 0.25);
+}
+
+.ksa-search-date-wrap {
+    min-width: 240px;
+}
+
+.ksa-date-input {
+    width: 100%;
+    padding: 0.55rem 0.9rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 11px;
+    font-size: 0.84rem;
+    color: #0B2545;
+    outline: none;
+    transition: all 0.18s ease;
+}
+
+.ksa-date-input:focus {
+    border-color: #008FD5;
+    box-shadow: 0 0 0 3px rgba(0, 143, 213, 0.15);
+}
+
+/* ══════════════════════════════════════════
+   TABLE CARD
+   ══════════════════════════════════════════ */
+.ksa-table-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+}
+
+.ksa-table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.ksa-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.ksa-table thead th {
+    background: #F8FAFC;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.25rem;
+    border-bottom: 1.5px solid #E2E8F0;
+}
+
+.ksa-table tbody tr {
+    border-bottom: 1px solid #F1F5F9;
+    transition: background 0.15s ease;
+}
+
+.ksa-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ksa-table tbody tr:hover {
+    background: #F8FCFF;
+}
+
+.ksa-table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    font-size: 0.86rem;
+    color: #1E293B;
+}
+
+.ksa-td-idx {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #94A3B8;
+}
+
+.ksa-date-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ksa-date-text {
+    font-weight: 700;
+    color: #0B2545;
+    font-size: 0.92rem;
+}
+
+.ksa-day-tag {
+    font-size: 0.72rem;
+    color: #64748B;
+    font-weight: 500;
+}
+
+/* Status Badge */
+.ksa-badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ksa-badge-status.present {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+}
+
+.ksa-badge-status.absent {
+    background: #FEE2E2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+}
+
+.ksa-badge-status.half-day {
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+/* Periods cell */
+.ksa-periods-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ksa-periods-val {
+    font-size: 0.84rem;
+    color: #334155;
+}
+
+.ksa-periods-val strong {
+    color: #0B2545;
+    font-size: 0.92rem;
+}
+
+.ksa-period-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.ksa-p-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.ksa-p-dot.filled {
+    background: #10B981;
+    box-shadow: 0 0 3px rgba(16, 185, 129, 0.4);
+}
+
+.ksa-p-dot.empty {
+    background: #E2E8F0;
+}
+
+/* Daily percentage badge */
+.ksa-daypct-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.ksa-daypct-badge.green { background: #DCFCE7; color: #15803D; }
+.ksa-daypct-badge.red   { background: #FEE2E2; color: #B91C1C; }
+.ksa-daypct-badge.amber { background: #FEF3C7; color: #B45309; }
+
+/* Empty / Loading */
+.ksa-empty-wrap {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ksa-empty-icon {
+    font-size: 3rem;
+    color: #CBD5E1;
+    margin-bottom: 0.5rem;
+}
+
+.ksa-empty-wrap h3 {
+    font-size: 1.15rem;
+    color: #1E293B;
+    margin: 0;
+}
+
+.ksa-empty-wrap p {
+    font-size: 0.84rem;
+    color: #64748B;
+    max-width: 400px;
+    margin: 0;
+}
+
+.ksa-reset-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.1rem;
+    background: #008FD5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ksa-loading-wrap {
+    padding: 3rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .ksa-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .ksa-header-right {
+        width: 100%;
+    }
+    .ksa-report-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
