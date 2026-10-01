@@ -40,159 +40,195 @@ const createTransporter = (usePort587 = true) => {
 
 // Email templates
 const emailTemplates = {
-  welcomeEmail: (adminName, email) => ({
-    subject: 'Welcome to Kongu Engineering College - Attendance Management System',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-        <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #6366f1 50%, #8b5cf6 75%, #a855f7 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
-          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">KONGU ENGINEERING COLLEGE</h1>
-          <p style="color: #fbbf24; margin: 5px 0; font-weight: bold;">(Autonomous)</p>
-          <p style="color: #e2e8f0; margin: 5px 0; font-size: 14px;">Affiliated to Anna University | Accredited by NAAC with A++ Grade</p>
-          <p style="color: #cbd5e1; margin: 5px 0; font-size: 12px;">Perundurai Erode - 638060 Tamilnadu India</p>
-        </div>
-        
-        <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          <h2 style="color: #1e40af; margin-bottom: 20px;">Welcome to Our Attendance Management System!</h2>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            Dear <strong>${adminName}</strong>,
-          </p>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            Thank you for registering with our Student Attendance Management System. Your account has been successfully created and you can now access the system to manage student attendance efficiently.
-          </p>
-          
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #1e40af; margin-top: 0;">Account Details:</h3>
-            <p style="margin: 5px 0;"><strong>Name:</strong> ${adminName}</p>
-            <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
-            <p style="margin: 5px 0;"><strong>Status:</strong> <span style="color: #059669; font-weight: bold;">Active</span></p>
+  welcomeEmail: (adminName, email) => {
+    const dashboardUrl = process.env.FRONTEND_URL || 'https://kec-student-attendance.vercel.app';
+    return {
+      subject: 'Welcome to Kongu Engineering College - Attendance Management System',
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 24px 12px; background-color: #f1f5f9;">
+          <div style="background: linear-gradient(135deg, #0B2545 0%, #134074 100%); padding: 32px 28px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">KONGU ENGINEERING COLLEGE</h1>
+            <div style="margin: 10px 0 6px 0;">
+              <span style="display: inline-block; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); color: #72BE44; font-weight: 700; font-size: 12px; padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+                (Autonomous) · Transform Yourself
+              </span>
+            </div>
+            <p style="color: #93C5FD; margin: 4px 0 0 0; font-size: 13px; font-weight: 500;">Student Attendance & Academic Management System</p>
           </div>
           
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            You can now log in to the system using your email address and password to:
-          </p>
-          
-          <ul style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            <li>Add and manage students</li>
-            <li>Mark daily attendance</li>
-            <li>Generate attendance reports</li>
-            <li>View detailed statistics</li>
-          </ul>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.FRONTEND_URL || 'https://kec-admin-attendance.vercel.app'}" 
-               style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-              Access Dashboard
-            </a>
-          </div>
-          
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            If you have any questions or need assistance, please contact the system administrator.
-          </p>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
-          <p>© 2024 Kongu Engineering College. All rights reserved.</p>
-        </div>
-      </div>
-    `
-  }),
-
-  loginEmail: (adminName, email, loginTime, ipAddress) => ({
-    subject: 'Login Notification - Kongu Engineering College Attendance System',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-        <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #6366f1 50%, #8b5cf6 75%, #a855f7 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
-          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">KONGU ENGINEERING COLLEGE</h1>
-          <p style="color: #fbbf24; margin: 5px 0; font-weight: bold;">(Autonomous)</p>
-          <p style="color: #e2e8f0; margin: 5px 0; font-size: 14px;">Affiliated to Anna University | Accredited by NAAC with A++ Grade</p>
-          <p style="color: #cbd5e1; margin: 5px 0; font-size: 12px;">Perundurai Erode - 638060 Tamilnadu India</p>
-        </div>
-        
-        <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          <h2 style="color: #1e40af; margin-bottom: 20px;">🔐 Login Notification</h2>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            Dear <strong>${adminName}</strong>,
-          </p>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            We detected a successful login to your Attendance Management System account. If this was you, no action is needed.
-          </p>
-          
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #1e40af; margin-top: 0;">📋 Login Details:</h3>
-            <p style="margin: 5px 0;"><strong>👤 Account:</strong> ${adminName}</p>
-            <p style="margin: 5px 0;"><strong>📧 Email:</strong> ${email}</p>
-            <p style="margin: 5px 0;"><strong>🕐 Login Time:</strong> ${loginTime}</p>
-            ${ipAddress ? `<p style="margin: 5px 0;"><strong>🌐 IP Address:</strong> ${ipAddress}</p>` : ''}
-            <p style="margin: 5px 0;"><strong>✅ Status:</strong> <span style="color: #059669; font-weight: bold;">Successful</span></p>
-          </div>
-          
-          <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
-            <p style="color: #856404; margin: 0; font-size: 14px;">
-              <strong>⚠️ Security Notice:</strong> If you did not perform this login, please change your password immediately and contact the system administrator.
+          <div style="background: #ffffff; padding: 32px 30px; border-radius: 0 0 16px 16px; box-shadow: 0 6px 20px rgba(11, 37, 69, 0.07); border: 1px solid #e2e8f0; border-top: none;">
+            <div style="margin-bottom: 14px;">
+              <span style="display: inline-block; background: #DCFCE7; border: 1px solid #BBF7D0; color: #15803D; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;">
+                ✓ Account Created Successfully
+              </span>
+            </div>
+            <h2 style="color: #0B2545; margin: 0 0 16px 0; font-size: 20px; font-weight: 700;">Welcome to KEC Attendance System</h2>
+            
+            <p style="color: #334155; line-height: 1.6; margin-bottom: 20px; font-size: 14.5px;">
+              Dear <strong>${adminName}</strong>,
+            </p>
+            
+            <p style="color: #475569; line-height: 1.6; margin-bottom: 20px; font-size: 14px;">
+              Your account has been registered successfully with the Kongu Engineering College Attendance Management System. You now have full access to manage students, mark period attendance, enter assessment marks, and generate institutional reports.
+            </p>
+            
+            <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 18px 20px; border-radius: 12px; margin: 20px 0;">
+              <h3 style="color: #0B2545; margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700;">📋 Account Profile:</h3>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>👤 Name:</strong> ${adminName}</p>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>📧 Email:</strong> ${email}</p>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>🔐 Status:</strong> <span style="background: #DCFCE7; color: #15803D; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 12px;">Active Verified</span></p>
+            </div>
+            
+            <div style="text-align: center; margin: 28px 0;">
+              <a href="${dashboardUrl}" 
+                 style="background: linear-gradient(135deg, #008FD5 0%, #0B2545 100%); color: #ffffff; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(0, 143, 213, 0.3);">
+                Access Dashboard →
+              </a>
+            </div>
+            
+            <p style="color: #94A3B8; font-size: 12.5px; margin-top: 26px; border-top: 1px solid #E2E8F0; padding-top: 18px; line-height: 1.5;">
+              If you have any questions or require administrative assistance, please contact the KEC Attendance Administration team.
             </p>
           </div>
           
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.FRONTEND_URL || 'https://kec-admin-attendance.vercel.app'}" 
-               style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-              Access Dashboard
-            </a>
+          <div style="text-align: center; margin-top: 20px; color: #64748B; font-size: 12px; line-height: 1.6;">
+            <p style="margin: 0 0 4px 0; font-weight: 600; color: #475569;">© 2026 Kongu Engineering College. All rights reserved.</p>
+            <p style="margin: 0 0 4px 0;">Perundurai Erode - 638060 Tamilnadu India</p>
+            <p style="margin: 0; color: #94A3B8; font-size: 11.5px;">(Autonomous) · Transform Yourself</p>
           </div>
-          
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            This is an automated security notification. For security reasons, we notify you of all login activities on your account.
-          </p>
         </div>
-        
-        <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
-          <p>© 2024 Kongu Engineering College. All rights reserved.</p>
-        </div>
-      </div>
-    `
-  }),
+      `
+    };
+  },
 
-  passwordResetEmail: (adminName, resetToken) => ({
-    subject: 'Password Reset Request - Kongu Engineering College',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-        <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #6366f1 50%, #8b5cf6 75%, #a855f7 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
-          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">KONGU ENGINEERING COLLEGE</h1>
-          <p style="color: #fbbf24; margin: 5px 0; font-weight: bold;">(Autonomous)</p>
-        </div>
-        
-        <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          <h2 style="color: #1e40af; margin-bottom: 20px;">Password Reset Request</h2>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            Dear <strong>${adminName}</strong>,
-          </p>
-          
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            We received a request to reset your password for the Attendance Management System. If you didn't make this request, you can safely ignore this email.
-          </p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.FRONTEND_URL || 'https://kec-admin-attendance.vercel.app'}/reset-password?token=${resetToken}" 
-               style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-              Reset Password
-            </a>
+  loginEmail: (adminName, email, loginTime, ipAddress) => {
+    const dashboardUrl = process.env.FRONTEND_URL || 'https://kec-student-attendance.vercel.app';
+    return {
+      subject: 'Login Notification - Kongu Engineering College Attendance System',
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 24px 12px; background-color: #f1f5f9;">
+          <div style="background: linear-gradient(135deg, #0B2545 0%, #134074 100%); padding: 32px 28px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">KONGU ENGINEERING COLLEGE</h1>
+            <div style="margin: 10px 0 6px 0;">
+              <span style="display: inline-block; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); color: #72BE44; font-weight: 700; font-size: 12px; padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+                (Autonomous) · Transform Yourself
+              </span>
+            </div>
+            <p style="color: #93C5FD; margin: 4px 0 0 0; font-size: 13px; font-weight: 500;">Student Attendance & Academic Management System</p>
           </div>
           
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            This link will expire in 1 hour for security reasons.
-          </p>
+          <div style="background: #ffffff; padding: 32px 30px; border-radius: 0 0 16px 16px; box-shadow: 0 6px 20px rgba(11, 37, 69, 0.07); border: 1px solid #e2e8f0; border-top: none;">
+            <div style="margin-bottom: 14px;">
+              <span style="display: inline-block; background: #E0F2FE; border: 1px solid #BAE6FD; color: #0369A1; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;">
+                🔐 Login Notification
+              </span>
+            </div>
+            <h2 style="color: #0B2545; margin: 0 0 16px 0; font-size: 20px; font-weight: 700;">Account Activity Alert</h2>
+            
+            <p style="color: #334155; line-height: 1.6; margin-bottom: 18px; font-size: 14.5px;">
+              Dear <strong>${adminName}</strong>,
+            </p>
+            
+            <p style="color: #475569; line-height: 1.6; margin-bottom: 20px; font-size: 14px;">
+              We detected a successful login to your Attendance Management System account. If this was you, no action is needed.
+            </p>
+            
+            <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; padding: 18px 20px; border-radius: 12px; margin: 20px 0;">
+              <h3 style="color: #0B2545; margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700;">📋 Login Details:</h3>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>👤 Account:</strong> ${adminName}</p>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>📧 Email:</strong> ${email}</p>
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>🕐 Login Time:</strong> ${loginTime}</p>
+              ${ipAddress ? `<p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>🌐 IP Address:</strong> <code style="background: #E2E8F0; padding: 2px 6px; border-radius: 4px;">${ipAddress}</code></p>` : ''}
+              <p style="margin: 6px 0; font-size: 13.5px; color: #334155;"><strong>✅ Status:</strong> <span style="background: #DCFCE7; color: #15803D; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 12px;">Successful</span></p>
+            </div>
+            
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-left: 4px solid #F59E0B; padding: 14px 18px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #92400E; margin: 0; font-size: 13px; line-height: 1.5;">
+                <strong>⚠️ Security Notice:</strong> If you did not perform this login, please change your password immediately and contact the system administrator.
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 28px 0;">
+              <a href="${dashboardUrl}" 
+                 style="background: linear-gradient(135deg, #008FD5 0%, #0B2545 100%); color: white; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(0, 143, 213, 0.3);">
+                Access Dashboard →
+              </a>
+            </div>
+            
+            <p style="color: #94A3B8; font-size: 12.5px; margin-top: 26px; border-top: 1px solid #E2E8F0; padding-top: 18px; line-height: 1.5;">
+              This is an automated security notification. For security reasons, we notify you of all login activities on your account.
+            </p>
+          </div>
+          
+          <div style="text-align: center; margin-top: 20px; color: #64748B; font-size: 12px; line-height: 1.6;">
+            <p style="margin: 0 0 4px 0; font-weight: 600; color: #475569;">© 2026 Kongu Engineering College. All rights reserved.</p>
+            <p style="margin: 0 0 4px 0;">Perundurai Erode - 638060 Tamilnadu India</p>
+            <p style="margin: 0; color: #94A3B8; font-size: 11.5px;">(Autonomous) · Transform Yourself</p>
+          </div>
         </div>
-        
-        <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
-          <p>© 2024 Kongu Engineering College. All rights reserved.</p>
+      `
+    };
+  },
+
+  passwordResetEmail: (adminName, resetToken) => {
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://kec-student-attendance.vercel.app'}/reset-password?token=${resetToken}`;
+    return {
+      subject: 'Password Reset Request - Kongu Engineering College',
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 24px 12px; background-color: #f1f5f9;">
+          <div style="background: linear-gradient(135deg, #0B2545 0%, #134074 100%); padding: 32px 28px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">KONGU ENGINEERING COLLEGE</h1>
+            <div style="margin: 10px 0 6px 0;">
+              <span style="display: inline-block; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); color: #72BE44; font-weight: 700; font-size: 12px; padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+                (Autonomous) · Transform Yourself
+              </span>
+            </div>
+            <p style="color: #93C5FD; margin: 4px 0 0 0; font-size: 13px; font-weight: 500;">Student Attendance & Academic Management System</p>
+          </div>
+          
+          <div style="background: #ffffff; padding: 32px 30px; border-radius: 0 0 16px 16px; box-shadow: 0 6px 20px rgba(11, 37, 69, 0.07); border: 1px solid #e2e8f0; border-top: none;">
+            <div style="margin-bottom: 14px;">
+              <span style="display: inline-block; background: #FEE2E2; border: 1px solid #FECACA; color: #DC2626; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;">
+                🔑 Password Recovery
+              </span>
+            </div>
+            <h2 style="color: #0B2545; margin: 0 0 16px 0; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
+            
+            <p style="color: #334155; line-height: 1.6; margin-bottom: 18px; font-size: 14.5px;">
+              Dear <strong>${adminName}</strong>,
+            </p>
+            
+            <p style="color: #475569; line-height: 1.6; margin-bottom: 22px; font-size: 14px;">
+              We received a request to reset your password for the Attendance Management System. If you didn't make this request, you can safely ignore this email.
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" 
+                 style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color: white; padding: 13px 34px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
+                Reset Password →
+              </a>
+            </div>
+            
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-left: 4px solid #F59E0B; padding: 14px 18px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #92400E; margin: 0; font-size: 13px; line-height: 1.5;">
+                <strong>⏱ Notice:</strong> This link will expire in 1 hour for security reasons.
+              </p>
+            </div>
+            
+            <p style="color: #94A3B8; font-size: 12.5px; margin-top: 26px; border-top: 1px solid #E2E8F0; padding-top: 18px; line-height: 1.5;">
+              If you have any questions or need assistance, please contact the system administrator.
+            </p>
+          </div>
+          
+          <div style="text-align: center; margin-top: 20px; color: #64748B; font-size: 12px; line-height: 1.6;">
+            <p style="margin: 0 0 4px 0; font-weight: 600; color: #475569;">© 2026 Kongu Engineering College. All rights reserved.</p>
+            <p style="margin: 0 0 4px 0;">Perundurai Erode - 638060 Tamilnadu India</p>
+            <p style="margin: 0; color: #94A3B8; font-size: 11.5px;">(Autonomous) · Transform Yourself</p>
+          </div>
         </div>
-      </div>
-    `
-  }),
+      `
+    };
+  },
 
   csvReportEmail: (subject, csvContent, fileName, reportType, reportData) => {
     const currentDate = new Date().toLocaleString('en-IN', {
@@ -204,49 +240,131 @@ const emailTemplates = {
       second: '2-digit'
     });
 
-    const totalRecords = reportData.rows ? reportData.rows.length : 'N/A';
+    const rowsCount = reportData.rows ? reportData.rows.length : (reportData.totalRecords || 0);
+    const totalRecords = rowsCount || 'N/A';
     const className = reportData.className || '';
     const section = reportData.section || '';
     const date = reportData.date || '';
     const startDate = reportData.startDate || '';
     const endDate = reportData.endDate || '';
     const studentName = reportData.studentName || '';
+    const dashboardUrl = process.env.FRONTEND_URL || 'https://kec-student-attendance.vercel.app';
 
-    // Build dynamic content based on report type
-    let reportDetails = '';
-    if (className) reportDetails += `<p style="margin: 8px 0;"><strong>🏫 Class:</strong> ${className}</p>`;
-    if (section) reportDetails += `<p style="margin: 8px 0;"><strong>📚 Section:</strong> ${section}</p>`;
-    if (date) reportDetails += `<p style="margin: 8px 0;"><strong>📅 Date:</strong> ${date}</p>`;
-    if (startDate && endDate) reportDetails += `<p style="margin: 8px 0;"><strong>📅 Period:</strong> ${startDate} to ${endDate}</p>`;
-    if (studentName) reportDetails += `<p style="margin: 8px 0;"><strong>👤 Student:</strong> ${studentName}</p>`;
+    // Tailor label & titles based on report type
+    let recordsLabel = 'records';
+    let reportTypeTitle = 'Attendance Report';
+
+    if (reportType === 'student') {
+      recordsLabel = totalRecords === 1 ? 'period' : 'periods';
+      reportTypeTitle = 'Student Attendance Report';
+    } else if (reportType === 'daily') {
+      recordsLabel = totalRecords === 1 ? 'student' : 'students';
+      reportTypeTitle = 'Daily Attendance Report';
+    } else if (reportType === 'range') {
+      recordsLabel = totalRecords === 1 ? 'student' : 'students';
+      reportTypeTitle = 'Date Range Attendance Report';
+    }
+
+    let dynamicRows = '';
+    if (studentName) {
+      dynamicRows += `
+        <tr>
+          <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">👤 Student:</td>
+          <td style="padding: 7px 0; color: #0F172A; font-size: 14px; font-weight: 700;">${studentName}</td>
+        </tr>`;
+    }
+    if (className) {
+      dynamicRows += `
+        <tr>
+          <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">🏫 Class:</td>
+          <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 600;">${className}</td>
+        </tr>`;
+    }
+    if (section) {
+      dynamicRows += `
+        <tr>
+          <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📚 Section:</td>
+          <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 600;">Section ${section}</td>
+        </tr>`;
+    }
+    if (date) {
+      dynamicRows += `
+        <tr>
+          <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📅 Date:</td>
+          <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 600;">${date}</td>
+        </tr>`;
+    }
+    if (startDate && endDate) {
+      dynamicRows += `
+        <tr>
+          <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📅 Period:</td>
+          <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 600;">${startDate} to ${endDate}</td>
+        </tr>`;
+    }
 
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-        <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #6366f1 50%, #8b5cf6 75%, #a855f7 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px;">
-          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">KONGU ENGINEERING COLLEGE</h1>
-          <p style="color: #fbbf24; margin: 5px 0; font-weight: bold;">(Autonomous)</p>
-          <p style="color: #e2e8f0; margin: 5px 0; font-size: 14px;">Student Attendance Management System</p>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 24px 12px; background-color: #f1f5f9; -webkit-font-smoothing: antialiased;">
+        <!-- Header Banner (KEC Institutional Navy Gradient) -->
+        <div style="background: linear-gradient(135deg, #0B2545 0%, #134074 100%); padding: 32px 28px; border-radius: 16px 16px 0 0; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">KONGU ENGINEERING COLLEGE</h1>
+          <div style="margin: 10px 0 6px 0;">
+            <span style="display: inline-block; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); color: #72BE44; font-weight: 700; font-size: 12px; padding: 3px 12px; border-radius: 20px; letter-spacing: 0.5px;">
+              (Autonomous) · Transform Yourself
+            </span>
+          </div>
+          <p style="color: #93C5FD; margin: 4px 0 0 0; font-size: 13px; font-weight: 500;">Student Attendance & Academic Management System</p>
         </div>
         
-        <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          <h2 style="color: #1e40af; margin-bottom: 20px;">📊 Attendance Report Generated Successfully</h2>
+        <!-- Main Card Body -->
+        <div style="background: #ffffff; padding: 32px 30px; border-radius: 0 0 16px 16px; box-shadow: 0 6px 20px rgba(11, 37, 69, 0.07); border: 1px solid #e2e8f0; border-top: none;">
+          <!-- Status Badge -->
+          <div style="margin-bottom: 14px;">
+            <span style="display: inline-block; background: #DCFCE7; border: 1px solid #BBF7D0; color: #15803D; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+              ✓ Report Generated Successfully
+            </span>
+          </div>
+
+          <h2 style="color: #0B2545; margin: 0 0 14px 0; font-size: 20px; font-weight: 700;">${reportTypeTitle}</h2>
           
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
+          <p style="color: #475569; line-height: 1.6; margin: 0 0 22px 0; font-size: 14.5px;">
             Your attendance report has been generated successfully and is attached to this email. The report contains detailed attendance information for your selected criteria.
           </p>
           
-          <div style="background: #f3f4f6; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #1e40af; margin-top: 0;">📋 Report Details:</h3>
-            <p style="margin: 8px 0;"><strong>📄 Report Type:</strong> ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Attendance Report</p>
-            <p style="margin: 8px 0;"><strong>📁 File Name:</strong> ${fileName}</p>
-            <p style="margin: 8px 0;"><strong>📅 Generated On:</strong> ${currentDate}</p>
-            <p style="margin: 8px 0;"><strong>📊 Total Records:</strong> ${totalRecords} students</p>
-            ${reportDetails}
+          <!-- Parameters Card -->
+          <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <div style="border-bottom: 1.5px solid #E2E8F0; padding-bottom: 10px; margin-bottom: 14px;">
+              <strong style="color: #0B2545; font-size: 14.5px; letter-spacing: 0.2px;">📋 Report Details:</strong>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📄 Report Type:</td>
+                <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 700;">${reportTypeTitle}</td>
+              </tr>
+              <tr>
+                <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📁 File Name:</td>
+                <td style="padding: 7px 0; color: #008FD5; font-size: 13px; font-weight: 700; font-family: monospace;">${fileName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📅 Generated On:</td>
+                <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 600;">${currentDate}</td>
+              </tr>
+              <tr>
+                <td style="padding: 7px 0; color: #64748B; font-size: 13.5px; font-weight: 600; width: 36%;">📊 Total Records:</td>
+                <td style="padding: 7px 0; color: #0F172A; font-size: 13.5px; font-weight: 700;">
+                  <span style="background: #E0F2FE; color: #0369A1; padding: 3px 10px; border-radius: 8px; font-size: 13px;">
+                    ${totalRecords} ${recordsLabel}
+                  </span>
+                </td>
+              </tr>
+              ${dynamicRows}
+            </table>
           </div>
           
-          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-            <h4 style="color: #1e40af; margin: 0 0 10px 0;">📈 Report Features:</h4>
-            <ul style="color: #374151; margin: 0; padding-left: 20px;">
+          <!-- Features Box -->
+          <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #72BE44; border-radius: 8px; padding: 16px 20px; margin: 22px 0;">
+            <h4 style="color: #166534; margin: 0 0 10px 0; font-size: 14px; font-weight: 700;">📈 Report Features:</h4>
+            <ul style="color: #334155; margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.7;">
               <li>Detailed period-wise attendance status</li>
               <li>Student-wise attendance statistics</li>
               <li>Attendance percentage calculations</li>
@@ -254,31 +372,35 @@ const emailTemplates = {
             </ul>
           </div>
           
-          <p style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-            <strong>📎 Attachment:</strong> The CSV file contains detailed attendance information that you can open in Excel, Google Sheets, or any spreadsheet application for further analysis.
+          <p style="color: #475569; line-height: 1.6; margin: 20px 0; font-size: 14px;">
+            <strong style="color: #0B2545;">📎 Attachment:</strong> The CSV file contains detailed attendance information that you can open in Excel, Google Sheets, or any spreadsheet application for further analysis.
           </p>
           
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.FRONTEND_URL || 'https://kec-admin-attendance.vercel.app'}" 
-               style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-              🏠 Access Dashboard
+          <!-- Action Button -->
+          <div style="text-align: center; margin: 28px 0;">
+            <a href="${dashboardUrl}" 
+               style="background: linear-gradient(135deg, #008FD5 0%, #0B2545 100%); color: #ffffff; padding: 13px 34px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-block; box-shadow: 0 4px 14px rgba(0, 143, 213, 0.3);">
+              Access Dashboard →
             </a>
           </div>
           
-          <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
-            <p style="color: #856404; margin: 0; font-size: 14px;">
+          <!-- Tip Box -->
+          <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 4px solid #008FD5; padding: 14px 18px; border-radius: 8px; margin: 22px 0;">
+            <p style="color: #1E40AF; margin: 0; font-size: 13px; line-height: 1.5;">
               <strong>💡 Tip:</strong> You can use this report for attendance analysis, parent communication, and academic planning.
             </p>
           </div>
           
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+          <p style="color: #94A3B8; font-size: 12.5px; margin-top: 26px; border-top: 1px solid #E2E8F0; padding-top: 18px; line-height: 1.5;">
             If you have any questions about this report or need assistance, please contact the system administrator.
           </p>
         </div>
         
-        <div style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 12px;">
-          <p>© 2024 Kongu Engineering College. All rights reserved.</p>
-          <p style="margin-top: 5px;">Perundurai Erode - 638060 Tamilnadu India</p>
+        <!-- Institutional Footer -->
+        <div style="text-align: center; margin-top: 20px; color: #64748B; font-size: 12px; line-height: 1.6;">
+          <p style="margin: 0 0 4px 0; font-weight: 600; color: #475569;">© 2026 Kongu Engineering College. All rights reserved.</p>
+          <p style="margin: 0 0 4px 0;">Perundurai Erode - 638060 Tamilnadu India</p>
+          <p style="margin: 0; color: #94A3B8; font-size: 11.5px;">(Autonomous) · Transform Yourself</p>
         </div>
       </div>
     `;
